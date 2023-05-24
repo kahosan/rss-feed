@@ -37,8 +37,9 @@ async function detectRssLink(uri: string) {
     return new URL(rssLink, uri).href
 }
 
+const cache = JSON.parse(readFileSync('./cache.json', 'utf-8')) as string[]
+
 const r = rss.map(uri => limit(async () => {
-  const cache = JSON.parse(readFileSync('./cache.json', 'utf-8')) as string[]
   const cacheLink = cache.find(c => uri.includes(c))
   if (cacheLink)
     return cacheLink
@@ -68,8 +69,8 @@ const requests = rss_link.map(uri => limit(async () => {
     const rssData = await extract(uri) as F
 
     // add to cache
-    const cache = JSON.parse(readFileSync('./cache.json', 'utf-8')) as string[]
-    writeFileSync('./cache.json', JSON.stringify([...cache, uri], null, 2))
+    if (!cache.find(c => uri.includes(c)))
+      writeFileSync('./cache.json', JSON.stringify([...cache, uri], null, 2))
 
     const siteTitle = rssData.title
     const siteLink = rssData.link
