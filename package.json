@@ -9,7 +9,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite --port 3000 --host",
-    "build": "vite build",
+    "build": "esno gen_data.ts && vite build",
     "lint": "eslint .",
     "typecheck": "vue-tsc --noEmit",
     "preview": "vite preview",
