@@ -1,8 +1,7 @@
+main = "./dist/index.html"
 account_id = "689fc74db37d94d7bf42a5bbf4931407"
 workers_dev = false
 route = "rss.hitorinbc.com/*"
-zone_id = "5598857b1914eb03cac2a05af661461a"
 
 [site]
 bucket = "./dist"
-entry-point = "workers-site"
