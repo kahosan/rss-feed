@@ -31,7 +31,6 @@ jobs:
         with:
           version: ${{ matrix.pnpm-version }}
       
-      - name: Generate
       - run: pnpm i
       - run: pnpm build
       
