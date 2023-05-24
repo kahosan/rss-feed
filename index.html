@@ -7,6 +7,19 @@
   <link rel="icon" href="" type="image/svg+xml">
   <title>RSS Feed</title>
   <meta name="description" content="">
+  <script>
+    (function () {
+      if (!window.localStorage) return;
+
+      const theme = window.localStorage.getItem('vueuse-color-scheme')
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : ''
+      if (theme == "auto") {
+        document.documentElement.classList.add(systemTheme);
+      } else if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      };
+    })()
+  </script>
 </head>
 
 <body text-gray-700 dark:text-gray-200>
