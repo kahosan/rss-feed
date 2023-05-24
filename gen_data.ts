@@ -58,7 +58,9 @@ const r = rss.map(uri => limit(async () => {
 
 const rss_link = [...rss_manual, ...await Promise.all(r)]
 
+const cacheTemp: string[] = []
 const result: RssData = { unknownURI: [], unknownDate: [], contents: {} }
+
 const requests = rss_link.map(uri => limit(async () => {
   if (uri.startsWith('[ERROR]')) {
     result.unknownURI.push(uri.replace('[ERROR]-', ''))
@@ -70,7 +72,7 @@ const requests = rss_link.map(uri => limit(async () => {
 
     // add to cache
     if (!cache.find(c => uri.includes(c)))
-      writeFileSync('./cache.json', JSON.stringify([...cache, uri], null, 2))
+      cacheTemp.push(uri)
 
     const siteTitle = rssData.title
     const siteLink = rssData.link
@@ -121,3 +123,4 @@ const requests = rss_link.map(uri => limit(async () => {
 
 await Promise.all(requests)
 writeFileSync('./src/assets/rss_data.json', JSON.stringify(result, null, 2))
+writeFileSync('./cache.json', JSON.stringify([...cache, ...cacheTemp], null, 2))
