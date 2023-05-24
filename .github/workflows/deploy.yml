@@ -36,5 +36,7 @@ jobs:
       
       - name: Deploy
         uses: cloudflare/wrangler-action@1.3.0
+        env:
+          USER: root
         with:
           apiToken: ${{ secrets.CF_WORKERS_TOKEN }}
