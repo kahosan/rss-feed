@@ -1,4 +1,4 @@
-import { readFile, writeFile } from 'fs/promises'
+import { writeFile } from 'fs/promises'
 
 import type { FeedData, FeedEntry } from '@extractus/feed-extractor'
 import { extract } from '@extractus/feed-extractor'
@@ -7,6 +7,7 @@ import ky from 'ky'
 import plimit from 'p-limit'
 import { getYear } from 'date-fns'
 
+import cache from 'cache.json'
 import rss from 'rss.json'
 import rss_manual from 'rss_manual.json'
 
@@ -29,7 +30,6 @@ async function detectRssLink(uri: string) {
 
   const reg = /(?<=href=["/]"?).+?(?=["> ])/gm
 
-  // const sp = ['/atom.xml', '/feed.xml', '/rss.xml', '/rss', '/feed', '/atom', 'rss', 'atom', 'feed', 'rss.xml', 'atom.xml', 'feed.xml', '/atom/', '/feed/', '/rss/', 'index.xml', '/index.xml', '/blog/rss.xml', '/rss', 'rss', '/RSS', 'RSS']
   const sp = ['atom', 'feed', 'rss']
 
   const rssLink = html.match(reg)?.find(link => sp.some(sp => link.includes(sp)))
@@ -37,8 +37,6 @@ async function detectRssLink(uri: string) {
   if (rssLink)
     return new URL(rssLink, uri).href
 }
-
-const cache = JSON.parse(await readFile('./cache.json', 'utf-8')) as string[]
 
 const r = rss.map(uri => limit(async () => {
   const cacheLink = cache.find(c => uri.includes(new URL(c).hostname))
