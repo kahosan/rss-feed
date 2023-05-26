@@ -11,8 +11,8 @@ const monthDays = Object.keys(props.yearData).sort((a, b) => {
 
 const getMonthData = (monthDay: string) => props.yearData[monthDay].entries
 
-const displayMonthDays = ref<string[]>([])
-const chunkSize = 5
+const displayMonthDays = ref<string[]>(monthDays.slice(0, 15))
+const chunkSize = 10
 
 const loadMore = () => {
   const currentLength = displayMonthDays.value.length
