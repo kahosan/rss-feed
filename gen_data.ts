@@ -128,5 +128,5 @@ const requests = rss_link.map(uri => limit(async () => {
 }))
 
 await Promise.all(requests)
-await writeFile('./src/assets/rss_data.json', JSON.stringify(result, null, 2))
-await writeFile('./cache.json', JSON.stringify([...cache, ...cacheTemp], null, 2))
+await writeFile(new URL('src/assets/rss_data.json', import.meta.url), JSON.stringify(result, null, 2))
+await writeFile(new URL('cache.json', import.meta.url), JSON.stringify([...cache, ...cacheTemp], null, 2))
