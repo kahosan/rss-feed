@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import type { source } from '~/types/source'
-defineProps<{ changeSource: (s: source) => void; active: (s: source) => boolean }>()
+import type { DataSource } from '~/types/source'
+defineProps<{ changeSource: (s: DataSource) => void; active: (s: DataSource) => boolean }>()
 </script>
 
 <template>
@@ -19,7 +19,7 @@ defineProps<{ changeSource: (s: source) => void; active: (s: source) => boolean 
             失败列表
           </button>
         </div>
-        <div i-carbon-moon cursor-pointer transition-300 dark:i-carbon-sun hover:op-60 @click="() => toggleDark()" />
+        <div i-carbon-moon dark:i-carbon-sun cursor-pointer transition-300 hover:op-60 @click="() => toggleDark()" />
       </div>
     </div>
   </div>

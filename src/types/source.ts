@@ -1,1 +1,1 @@
-export type source = 'default' | 'unknownDate' | 'unknownURI'
+export type DataSource = 'default' | 'unknownDate' | 'unknownURI'
