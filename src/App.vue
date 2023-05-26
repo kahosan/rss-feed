@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { source } from './types/source'
-import type { RssData, RssMonth } from '~/types/rss'
+import type { RssData } from '~/types/rss'
 
 import rss_data from '~/assets/rss_data.json'
 
@@ -10,7 +10,7 @@ const years = Object.keys(rssData.contents ?? []).sort((a, b) => +b - +a)
 
 const yearData = (year: string) => {
   // key must be a string literal
-  return rssData.contents?.[year as keyof typeof rssData.contents] as unknown as RssMonth
+  return rssData.contents?.[year]
 }
 
 const dataSource = ref<source>('default')
