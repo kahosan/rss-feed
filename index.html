@@ -13,7 +13,7 @@
 
       const theme = window.localStorage.getItem('vueuse-color-scheme')
       const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : ''
-      if (theme == "auto") {
+      if (theme == "auto" && systemTheme) {
         document.documentElement.classList.add(systemTheme);
       } else if (theme === 'dark') {
         document.documentElement.classList.add('dark');
