@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from 'node:fs'
+import { readFile, writeFile } from 'fs/promises'
 
 import type { FeedData, FeedEntry } from '@extractus/feed-extractor'
 import { extract } from '@extractus/feed-extractor'
@@ -13,7 +13,7 @@ import rss_manual from 'rss_manual.json'
 import type { RssData } from '~/types/rss'
 
 interface F extends Required<FeedData> {
-  entries: Required<FeedEntry>[]
+  entries: (Required<FeedEntry> & { content: string })[]
 }
 
 const limit = plimit(4)
@@ -29,7 +29,7 @@ async function detectRssLink(uri: string) {
   const reg = /(?<=href=["/]"?).+?(?=["> ])/gm
 
   // const sp = ['/atom.xml', '/feed.xml', '/rss.xml', '/rss', '/feed', '/atom', 'rss', 'atom', 'feed', 'rss.xml', 'atom.xml', 'feed.xml', '/atom/', '/feed/', '/rss/', 'index.xml', '/index.xml', '/blog/rss.xml', '/rss', 'rss', '/RSS', 'RSS']
-  const sp = ['atom', 'feed', 'rss', 'RSS', 'index.xml']
+  const sp = ['atom', 'feed', 'rss']
 
   const rssLink = html.match(reg)?.find(link => sp.some(sp => link.includes(sp)))
 
@@ -37,38 +37,47 @@ async function detectRssLink(uri: string) {
     return new URL(rssLink, uri).href
 }
 
-const cache = JSON.parse(readFileSync('./cache.json', 'utf-8')) as string[]
+const cache = JSON.parse(await readFile('./cache.json', 'utf-8')) as string[]
 
 const r = rss.map(uri => limit(async () => {
-  const cacheLink = cache.find(c => uri.includes(c))
+  const cacheLink = cache.find(c => uri.includes(new URL(c).hostname))
   if (cacheLink)
     return cacheLink
 
   try {
     const link = await detectRssLink(uri)
     if (!link)
-      return `[ERROR]-${uri}`
+      return `[ERROR-MESSAGE] | detect rss link not found | ${uri}`
 
     return link
   }
   catch (e: any) {
-    return `[ERROR]-${uri}`
+    return `[ERROR-MESSAGE] | ${e.message} | ${uri}`
   }
 }))
 
-const rss_link = [...rss_manual, ...await Promise.all(r)]
+const rss_link = [...new Set([...rss_manual, ...await Promise.all(r)])]
 
 const cacheTemp: string[] = []
 const result: RssData = { unknownURI: [], unknownDate: [], contents: {} }
 
 const requests = rss_link.map(uri => limit(async () => {
-  if (uri.startsWith('[ERROR]')) {
-    result.unknownURI.push(uri.replace('[ERROR]-', ''))
+  if (uri.startsWith('[ERROR-MESSAGE]')) {
+    result.unknownURI.push(uri)
     return
   }
 
   try {
-    const rssData = await extract(uri) as F
+    const rssData = await extract(uri, {
+      getExtraEntryFields(entryData: any) {
+        const { pubDate, published, updated } = entryData
+
+        return {
+          published: pubDate ?? published ?? updated,
+          content: entryData['content:encoded'],
+        }
+      },
+    }) as F
 
     // add to cache
     if (!cache.find(c => uri.includes(c)))
@@ -88,7 +97,7 @@ const requests = rss_link.map(uri => limit(async () => {
       const postTitle = entry.title
       const postLink = entry.link
       const published = entry.published
-      const description = entry.description
+      const description = entry.description ?? entry.content
 
       if (!year || !monthDay) {
         result.unknownDate.push({
@@ -97,7 +106,7 @@ const requests = rss_link.map(uri => limit(async () => {
           siteLink,
           postTitle,
           postLink,
-          description,
+          description: description?.slice(0, 100),
         })
         return
       }
@@ -116,11 +125,11 @@ const requests = rss_link.map(uri => limit(async () => {
       })
     })
   }
-  catch {
-    result.unknownURI.push(uri)
+  catch (e: any) {
+    result.unknownURI.push(`[ERROR-MESSAGE] | ${e.message} | ${uri}`)
   }
 }))
 
 await Promise.all(requests)
-writeFileSync('./src/assets/rss_data.json', JSON.stringify(result, null, 2))
-writeFileSync('./cache.json', JSON.stringify([...cache, ...cacheTemp], null, 2))
+await writeFile('./src/assets/rss_data.json', JSON.stringify(result, null, 2))
+await writeFile('./cache.json', JSON.stringify([...cache, ...cacheTemp], null, 2))
