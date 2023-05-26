@@ -3,21 +3,17 @@ import type { RssMonth } from '~/types/rss'
 
 const props = defineProps<{ year: string; yearData: RssMonth }>()
 
-const monthDays = Object.keys(props.yearData).sort((a, b) => {
-  const aDate = new Date(a)
-  const bDate = new Date(b)
-  return bDate.getTime() - aDate.getTime()
-})
+const timestamps = Object.keys(props.yearData).sort((a, b) => +b - +a)
 
-const getMonthData = (monthDay: string) => props.yearData[monthDay].entries
+const getMonthData = (timestamp: string) => props.yearData[timestamp].entries
 
-const displayMonthDays = ref<string[]>(monthDays.slice(0, 15))
+const displayData = ref<string[]>(timestamps.slice(0, 15))
 const chunkSize = 10
 
 const loadMore = () => {
-  const currentLength = displayMonthDays.value.length
-  const newData = monthDays.slice(currentLength, currentLength + chunkSize)
-  displayMonthDays.value.push(...newData)
+  const currentLength = displayData.value.length
+  const newData = timestamps.slice(currentLength, currentLength + chunkSize)
+  displayData.value.push(...newData)
 }
 
 // 分段加载数据
@@ -51,8 +47,8 @@ onUnmounted(() => {
       {{ props.year }}
     </h1>
     <div flex-1 overflow-hidden>
-      <div v-for="monthDay in displayMonthDays" :key="monthDay" mb-8>
-        <MonthsDay :month-day="monthDay" :month-day-data="getMonthData(monthDay)" />
+      <div v-for="timestamp in displayData" :key="timestamp" mb-8>
+        <MonthsDay :timestamp="timestamp" :month-day-data="getMonthData(timestamp)" />
       </div>
       <div ref="target" />
     </div>

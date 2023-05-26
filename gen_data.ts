@@ -5,7 +5,7 @@ import { extract } from '@extractus/feed-extractor'
 
 import ky from 'ky'
 import plimit from 'p-limit'
-import { getDate, getMonth, getYear } from 'date-fns'
+import { getYear } from 'date-fns'
 
 import rss from 'rss.json'
 import rss_manual from 'rss_manual.json'
@@ -18,12 +18,13 @@ interface F extends Required<FeedData> {
 
 const limit = plimit(4)
 
+const headers = new Headers({
+  'User-Agent': 'YJSNPI-RSS-Reader/1.0',
+  'Origin': 'https://www.google.com',
+  'Referer': 'https://www.google.com/',
+})
+
 async function detectRssLink(uri: string) {
-  const headers = new Headers({
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36',
-    'Origin': 'https://www.google.com',
-    'Referer': 'https://www.google.com/',
-  })
   const html = await ky.get(uri, { headers, timeout: 20 * 1000 }).text()
 
   const reg = /(?<=href=["/]"?).+?(?=["> ])/gm
@@ -77,7 +78,7 @@ const requests = rss_link.map(uri => limit(async () => {
           content: entryData['content:encoded'],
         }
       },
-    }) as F
+    }, { headers }) as F
 
     // add to cache
     if (!cache.find(c => uri.includes(c)))
@@ -89,9 +90,7 @@ const requests = rss_link.map(uri => limit(async () => {
     rssData.entries.forEach((entry) => {
       const date = new Date(entry.published ?? '')
       const year = getYear(date)
-      const month = getMonth(date) + 1
-      const dateDay = getDate(date)
-      const monthDay = `${month > 9 ? month : `0${month}`}-${dateDay > 9 ? dateDay : `0${dateDay}`}`
+      const timestamp = date.getTime()
 
       const id = entry.id
       const postTitle = entry.title
@@ -99,7 +98,7 @@ const requests = rss_link.map(uri => limit(async () => {
       const published = entry.published
       const description = entry.description ?? entry.content
 
-      if (!year || !monthDay) {
+      if (!year || !timestamp) {
         result.unknownDate.push({
           id,
           siteTitle,
@@ -112,9 +111,9 @@ const requests = rss_link.map(uri => limit(async () => {
       }
 
       result.contents[year] ??= {}
-      result.contents[year][monthDay] ??= { entries: [] }
+      result.contents[year][timestamp] ??= { entries: [] }
 
-      result.contents[year][monthDay].entries.push({
+      result.contents[year][timestamp].entries.push({
         id,
         siteTitle,
         siteLink,

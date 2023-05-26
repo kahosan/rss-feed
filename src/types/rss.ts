@@ -7,7 +7,7 @@ export interface RssData {
 }
 
 export interface RssMonth {
-  [monthDay: string]: {
+  [timestamp: string]: {
     entries: RssEntry[]
   }
 }

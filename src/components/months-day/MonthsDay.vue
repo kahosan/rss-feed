@@ -1,6 +1,13 @@
 <script lang="ts" setup>
+import { getDate, getMonth } from 'date-fns'
 import type { RssEntry } from '~/types/rss'
-defineProps<{ monthDay: string; monthDayData: RssEntry[] }>()
+
+const props = defineProps<{ timestamp: string; monthDayData: RssEntry[] }>()
+
+const date = new Date(+props.timestamp)
+const month = getMonth(date) + 1
+const dateDay = getDate(date)
+const monthDay = `${month > 9 ? month : `0${month}`}-${dateDay > 9 ? dateDay : `0${dateDay}`}`
 </script>
 
 <template>
