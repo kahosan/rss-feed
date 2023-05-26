@@ -6,7 +6,10 @@ defineProps<{ data: string[] }>()
   <div>
     <div text-5 color="[var(--c-h2-color)]">
       <div v-for="entry in data" :key="entry" mb-4 overflow-hidden>
-        <a target="_blank" :href="entry" block truncate transition hover:op-60>{{ entry }}</a>
+        <p op-4>
+          {{ entry.split(' | ').at(1) }}
+        </p>
+        <a target="_blank" :href="entry" block truncate transition hover:op-60>{{ entry.split(' | ').at(2) }}</a>
       </div>
     </div>
   </div>
