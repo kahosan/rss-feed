@@ -1,16 +1,14 @@
 export function lazyData<T>(target: Ref<HTMLDivElement | null>, data: T[], end: number, chunkSize: number, observerOptions: IntersectionObserverInit) {
-  const displayData = ref(data.slice(0, end))
+  // https://github.com/vuejs/core/issues/2136#issuecomment-908269949
+  const displayData = ref(data.slice(0, end)) as Ref<T[]>
 
   const loadMore = () => {
     const currentLength = displayData.value.length
-    const newData = ref(data.slice(currentLength, currentLength + chunkSize))
+    const newData = data.slice(currentLength, currentLength + chunkSize)
 
-    requestAnimationFrame(() => {
-      displayData.value.push(...newData.value)
-    })
+    requestAnimationFrame(() => displayData.value.push(...newData))
   }
 
-  // 分段加载数据
   const observer = ref<IntersectionObserver | null>(null)
 
   const intersectionCallback = (entries: IntersectionObserverEntry[]) => {
