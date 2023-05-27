@@ -5,7 +5,7 @@ import { extract } from '@extractus/feed-extractor'
 
 import ky from 'ky'
 import plimit from 'p-limit'
-import { getYear } from 'date-fns'
+import { getDate, getMonth, getYear } from 'date-fns'
 
 import cache from 'cache.json'
 import rss from 'rss.json'
@@ -58,7 +58,7 @@ const r = rss.map(uri => limit(async () => {
 const rss_link = [...new Set([...rss_manual, ...await Promise.all(r)])]
 
 const cacheTemp: string[] = []
-const result: RssData = { unknownURI: [], unknownDate: [], contents: {} }
+const result: RssData = { unknownURI: [], unknownDate: [], contents: [] }
 
 const requests = rss_link.map(uri => limit(async () => {
   if (uri.startsWith('[ERROR-MESSAGE]')) {
@@ -79,7 +79,7 @@ const requests = rss_link.map(uri => limit(async () => {
     }, { headers }) as F
 
     // add to cache
-    if (!cache.find(c => uri.includes(c)))
+    if (!cache.find(c => c.includes(uri)) || rss_manual.includes(uri))
       cacheTemp.push(uri)
 
     const siteTitle = rssData.title
@@ -88,7 +88,8 @@ const requests = rss_link.map(uri => limit(async () => {
     rssData.entries.forEach((entry) => {
       const date = new Date(entry.published ?? '')
       const year = getYear(date)
-      const timestamp = date.getTime()
+      const month = getMonth(date) + 1
+      const dateDay = getDate(date)
 
       const id = entry.id
       const postTitle = entry.title
@@ -96,7 +97,7 @@ const requests = rss_link.map(uri => limit(async () => {
       const published = entry.published
       const description = entry.description ?? entry.content
 
-      if (!year || !timestamp) {
+      if (!year || !month) {
         result.unknownDate.push({
           id,
           siteTitle,
@@ -108,18 +109,37 @@ const requests = rss_link.map(uri => limit(async () => {
         return
       }
 
-      result.contents[year] ??= {}
-      result.contents[year][timestamp] ??= { entries: [] }
+      const content = result.contents.find(c => c.year === year && c.month === month)
+      const monthDay = `${month > 9 ? month : `0${month}`}-${dateDay > 9 ? dateDay : `0${dateDay}`}`
 
-      result.contents[year][timestamp].entries.push({
-        id,
-        siteTitle,
-        siteLink,
-        postTitle,
-        postLink,
-        published,
-        description,
-      })
+      if (!content) {
+        result.contents.push({
+          year,
+          month,
+          entries: [{
+            id,
+            siteTitle,
+            siteLink,
+            postTitle,
+            postLink,
+            published,
+            description,
+            monthDay,
+          }],
+        })
+      }
+      else {
+        content.entries.push({
+          id,
+          siteTitle,
+          siteLink,
+          postTitle,
+          postLink,
+          published,
+          description,
+          monthDay,
+        })
+      }
     })
   }
   catch (e: any) {
@@ -128,5 +148,9 @@ const requests = rss_link.map(uri => limit(async () => {
 }))
 
 await Promise.all(requests)
+
+result.contents.sort((a, b) => b.year - a.year || b.month - a.month)
+result.contents.forEach(c => c.entries.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime()))
+
 await writeFile(new URL('src/assets/rss_data.json', import.meta.url), JSON.stringify(result, null, 2))
 await writeFile(new URL('cache.json', import.meta.url), JSON.stringify([...cache, ...cacheTemp], null, 2))

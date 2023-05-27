@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import type { RssEntry } from '~/types/rss'
-
-defineProps<{ data: Omit<RssEntry, 'published'>[] }>()
+import type { UnknownDate } from '~/types/rss'
+defineProps<{ data: UnknownDate }>()
 </script>
 
 <template>

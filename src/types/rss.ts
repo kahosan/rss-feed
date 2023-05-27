@@ -1,15 +1,15 @@
 export interface RssData {
   'unknownURI': string[]
-  'unknownDate': Omit<RssEntry, 'published'>[]
-  contents: {
-    [year: string]: RssMonth
-  }
+  'unknownDate': UnknownDate
+  contents: RssContents[]
 }
 
-export interface RssMonth {
-  [timestamp: string]: {
-    entries: RssEntry[]
-  }
+export type UnknownDate = Omit<Omit<RssEntry, 'published'>, 'monthDay'>[]
+
+export interface RssContents {
+  year: number
+  month: number
+  entries: RssEntry[]
 }
 
 export interface RssEntry {
@@ -18,6 +18,7 @@ export interface RssEntry {
   postTitle: string
   siteLink: string
   postLink: string
-  published: Date | undefined
+  published: Date | string
   description: string
+  monthDay: string
 }

@@ -1,20 +1,20 @@
 <script lang="ts" setup>
-import { getDate, getMonth } from 'date-fns'
+import { lazyData } from '~/composables/lazy'
 import type { RssEntry } from '~/types/rss'
 
-const props = defineProps<{ timestamp: string; monthDayData: RssEntry[] }>()
+const props = defineProps<{ month: number; monthDayData: RssEntry[] }>()
 
-const date = new Date(+props.timestamp)
-const month = getMonth(date) + 1
-const dateDay = getDate(date)
-const monthDay = `${month > 9 ? month : `0${month}`}-${dateDay > 9 ? dateDay : `0${dateDay}`}`
+const monthDayData = props.monthDayData
+
+const target = ref<HTMLDivElement | null>(null)
+const displayData = lazyData(target, monthDayData, 10, 10, { threshold: 0.1, rootMargin: '0px 0px 100px 0px' })
 </script>
 
 <template>
   <div ml-2>
     <div text-5 color="[var(--c-h2-color)]">
       <div mb-4>
-        <div v-for="entry in monthDayData" :key="entry.id" mb-8>
+        <div v-for="entry in displayData" :key="entry.id" mb-8>
           <div flex="~ justify-between" min-h-14>
             <div overflow-hidden>
               <a target="_blank" :href="entry.postLink" cursor-pointer transition hover:op-60>{{ entry.postTitle }}</a>
@@ -23,11 +23,12 @@ const monthDay = `${month > 9 ? month : `0${month}`}-${dateDay > 9 ? dateDay : `
               </p>
             </div>
             <div ml-4 max-w-28 min-w-28 overflow-hidden text-4>
-              <p>{{ monthDay }}</p>
+              <p>{{ entry.monthDay }}</p>
               <a target="_blank" block cursor-pointer truncate transition hover:op-60 :href="entry.siteLink">{{ entry.siteTitle }}</a>
             </div>
           </div>
         </div>
+        <div ref="target" />
       </div>
     </div>
   </div>
