@@ -12,7 +12,7 @@ const displayData = lazyData(target, props.monthDayData, 10, 10, { threshold: 0.
   <div ml-2>
     <div>
       <div mb-4>
-        <DataView :display-data="displayData" />
+        <DataView date-type="monthDay" :display-data="displayData" />
         <div ref="target" />
       </div>
     </div>

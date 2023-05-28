@@ -35,7 +35,7 @@ const displayData = computed(() => lazyData(target, result.value, 20, 10, { thre
         <div class="i-carbon-search" absolute right-2 top-4 cursor-pointer p-2 text-5 transition hover:op-60 @click="handleSearch" />
       </div>
       <div>
-        <DataView :display-data="displayData" />
+        <DataView date-type="year" :display-data="displayData" />
         <div ref="target" />
       </div>
     </div>

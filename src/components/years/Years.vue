@@ -20,7 +20,7 @@ const getMonthData = (month: number) => {
 <template>
   <div mb-16 md:flex="~">
     <h1 mb-2 text-7xl md:write-vertical-right>
-      {{ props.year }}
+      {{ year }}
     </h1>
     <div flex-1 overflow-hidden>
       <div v-for="month in months" :key="month" mb-8>
