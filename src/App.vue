@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { DataSource } from './types/source'
-import { lazyData } from './composables/lazy'
 import type { RssData } from '~/types/rss'
 
 import rss_data from '~/assets/rss_data.json'
@@ -21,7 +20,7 @@ const yearData = (year: number) => {
 }
 
 const source = ref<DataSource>('default')
-const active = (s: 'default' | 'unknownDate' | 'unknownURI') => source.value === s
+const active = (s: DataSource) => source.value === s
 
 const changeSource = (s: typeof source.value) => {
   source.value = s
@@ -39,6 +38,10 @@ const displayDataByYear = lazyData(target, years, 0, 1, { threshold: 0.1 })
         <div v-for="year in displayDataByYear" :key="year">
           <Years :year="year" :year-data="yearData(year)" />
         </div>
+        <div ref="target" />
+      </div>
+      <div v-else-if="source === 'search'">
+        <SearchData />
       </div>
       <div v-else-if="source === 'unknownDate'">
         <UnknownDate :data="rssData.unknownDate" />
@@ -50,6 +53,5 @@ const displayDataByYear = lazyData(target, years, 0, 1, { threshold: 0.1 })
     <div v-else>
       没有数据
     </div>
-    <div ref="target" />
   </main>
 </template>

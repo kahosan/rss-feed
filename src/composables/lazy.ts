@@ -9,8 +9,6 @@ export function lazyData<T>(target: Ref<HTMLDivElement | null>, data: T[], end: 
     requestAnimationFrame(() => displayData.value.push(...newData))
   }
 
-  const observer = ref<IntersectionObserver | null>(null)
-
   const intersectionCallback = (entries: IntersectionObserverEntry[]) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting)
@@ -18,17 +16,24 @@ export function lazyData<T>(target: Ref<HTMLDivElement | null>, data: T[], end: 
     })
   }
 
-  onMounted(() => {
-    observer.value = new IntersectionObserver(intersectionCallback, observerOptions)
-    if (target.value)
-      observer.value.observe(target.value)
-  })
+  let cleanup: () => void
+
+  const stopWatch = watch(
+    target,
+    (target) => {
+      const observer = new IntersectionObserver(intersectionCallback, observerOptions)
+      target && observer.observe(target)
+
+      cleanup = () => {
+        observer.disconnect()
+      }
+    },
+    { immediate: true, flush: 'post' },
+  )
 
   onUnmounted(() => {
-    if (observer.value && target.value) {
-      observer.value.unobserve(target.value)
-      observer.value.disconnect()
-    }
+    cleanup()
+    stopWatch()
   })
 
   return displayData

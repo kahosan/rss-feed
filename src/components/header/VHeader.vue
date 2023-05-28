@@ -9,6 +9,9 @@ defineProps<{ changeSource: (s: DataSource) => void; active: (s: DataSource) => 
       <h2>RSS Feed</h2>
       <div flex="~ items-center">
         <div children:pr-4 children:transition>
+          <button :class="active('search') ? 'op-60' : ''" @click="() => changeSource('search')">
+            搜索
+          </button>
           <button :class="active('default') ? 'op-60' : ''" @click="() => changeSource('default')">
             默认
           </button>

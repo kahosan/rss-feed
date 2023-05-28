@@ -9,9 +9,12 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    DataView: typeof import('./src/components/data-view/DataView.vue')['default']
     MonthsDay: typeof import('./src/components/months-day/MonthsDay.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Search: typeof import('./src/components/search/Search.vue')['default']
+    SearchData: typeof import('./src/components/search/SearchData.vue')['default']
     UnknownDate: typeof import('./src/components/unknowns/UnknownDate.vue')['default']
     UnknownURI: typeof import('./src/components/unknowns/UnknownURI.vue')['default']
     VHeader: typeof import('./src/components/header/VHeader.vue')['default']

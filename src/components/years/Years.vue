@@ -24,7 +24,7 @@ const getMonthData = (month: number) => {
     </h1>
     <div flex-1 overflow-hidden>
       <div v-for="month in months" :key="month" mb-8>
-        <MonthsDay :month="month" :month-day-data="getMonthData(month)" />
+        <MonthsDay :month-day-data="getMonthData(month)" />
       </div>
     </div>
   </div>
