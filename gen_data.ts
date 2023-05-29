@@ -79,7 +79,7 @@ const requests = rss_link.map(uri => limit(async () => {
     }, { headers }) as F
 
     // add to cache
-    if (!cache.find(c => c.includes(uri)) || rss_manual.includes(uri))
+    if (!cache.find(c => c === uri || rss_manual.includes(c)))
       cacheTemp.push(uri)
 
     const siteTitle = rssData.title
