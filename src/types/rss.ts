@@ -4,7 +4,7 @@ export interface RssData {
   contents: RssContents[]
 }
 
-export type UnknownDate = Omit<Omit<RssEntry, 'published'>, 'monthDay'>[]
+export type UnknownDate = Omit<RssEntry, 'published' | 'monthDay'>[]
 
 export interface RssContents {
   year: number
