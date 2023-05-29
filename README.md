@@ -10,4 +10,4 @@ fork 本项目，将 rss 链接添加到 `rss_manual.json` 文件中，注意保
 
 ## 定时更新
 
-使用 GitHub 的 Actions 功能，每天 7 点自动更新
+使用 GitHub 的 Actions 功能，每 4 小时更新一次
