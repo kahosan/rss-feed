@@ -97,48 +97,38 @@ const requests = rss_link.map(uri => limit(async () => {
       const published = entry.published
       const description = entry.description ?? entry.content
 
+      const contentEntry = {
+        id,
+        siteTitle,
+        siteLink,
+        postTitle,
+        postLink,
+        description,
+      }
+
       if (!year || !month) {
-        result.unknownDate.push({
-          id,
-          siteTitle,
-          siteLink,
-          postTitle,
-          postLink,
-          description: description?.slice(0, 100),
-        })
+        result.unknownDate.push(contentEntry)
         return
       }
 
       const content = result.contents.find(c => c.year === year && c.month === month)
       const monthDay = `${month > 9 ? month : `0${month}`}-${dateDay > 9 ? dateDay : `0${dateDay}`}`
 
+      const contentEntryWithDate = {
+        ...contentEntry,
+        published,
+        monthDay,
+      }
+
       if (!content) {
         result.contents.push({
           year,
           month,
-          entries: [{
-            id,
-            siteTitle,
-            siteLink,
-            postTitle,
-            postLink,
-            published,
-            description,
-            monthDay,
-          }],
+          entries: [contentEntryWithDate],
         })
       }
       else {
-        content.entries.push({
-          id,
-          siteTitle,
-          siteLink,
-          postTitle,
-          postLink,
-          published,
-          description,
-          monthDay,
-        })
+        content.entries.push(contentEntryWithDate)
       }
     })
   }
