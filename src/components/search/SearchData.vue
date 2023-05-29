@@ -1,14 +1,15 @@
 <script setup lang="ts">
+import { NInput } from 'naive-ui'
 import Fuse from 'fuse.js'
 import rss_data from '~/assets/rss_data.json'
 import type { RssContents, RssEntry } from '~/types/rss'
+import type { FuseOptions } from '~/types/fuse'
 
 const contents = rss_data.contents as RssContents[]
 
 const searchQuery = ref('')
 
-const fuse = new Fuse(contents.map(item => item.entries).flat(), {
-  // TODO optional option
+const fuseOptions = ref<FuseOptions>({
   keys: ['siteTitle', 'postTitle', 'description'],
   includeScore: true,
 })
@@ -17,6 +18,7 @@ const target = ref<HTMLDivElement | null>(null)
 const result = ref<RssEntry[]>([])
 
 const handleSearch = () => {
+  const fuse = new Fuse(contents.map(item => item.entries).flat(), fuseOptions.value)
   result.value = fuse.search(searchQuery.value).map(item => item.item)
 }
 
@@ -26,13 +28,17 @@ const displayData = computed(() => lazyData(target, result.value, 20, 10, { thre
 
 <template>
   <div flex="~ justify-center items-center">
-    <div max-w-4xl flex-1>
+    <div max-w-4xl flex-1 overflow-hidden>
       <h2 text-center text-6>
         搜索文章标题、描述、站点名称
       </h2>
-      <div relative mx-auto mb-12 max-w-xl flex>
-        <input v-model="searchQuery" mt-2 w-full border rounded-2 px-4 py-2 outline-none dark:border-gray-500 dark:bg="#272626" type="text" @keyup.enter="handleSearch">
-        <div class="i-carbon-search" absolute right-2 top-4 cursor-pointer p-2 text-5 transition hover:op-60 @click="handleSearch" />
+      <div relative mx-auto mb-12 max-w-xl>
+        <NInput v-model:value="searchQuery" :bordered="false" mt-2 placeholder="输入搜索内容..." @keyup.enter="handleSearch">
+          <template #suffix>
+            <div class="i-carbon-search" cursor-pointer text-4 transition hover:op-60 @click="handleSearch" />
+          </template>
+        </NInput>
+        <SearchOptions v-model="fuseOptions" />
       </div>
       <div>
         <DataView date-type="year" :display-data="displayData" />

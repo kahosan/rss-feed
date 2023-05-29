@@ -18,6 +18,7 @@ html {
   -moz-tab-size: 4;
   tab-size: 4;
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", Segoe UI Symbol, "Noto Color Emoji";
+  --input-color-focus: #f1f1f1 !important;
 }
 
 html.dark {
@@ -26,6 +27,7 @@ html.dark {
   --c-scrollbar-hover: #1f1e1e;
   --c-h1-color: #d1d1d121;
   --c-h2-color: #a8a8a8;
+  --input-color-focus: #272626 !important;
 }
 
 body {
@@ -47,4 +49,8 @@ h3 {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--c-scrollbar-hover);
+}
+
+.n-input {
+  background-color: var(--input-color-focus) !important;
 }

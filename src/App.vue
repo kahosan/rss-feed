@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { NConfigProvider, darkTheme } from 'naive-ui'
 import type { DataSource } from './types/source'
 import type { RssData } from '~/types/rss'
 
@@ -41,7 +42,9 @@ const displayDataByYear = lazyData(target, years, 0, 1, { threshold: 0.1 })
         <div ref="target" />
       </div>
       <div v-else-if="source === 'search'">
-        <SearchData />
+        <NConfigProvider :theme="isDark ? darkTheme : null">
+          <SearchData />
+        </NConfigProvider>
       </div>
       <div v-else-if="source === 'unknownDate'">
         <UnknownDate :data="rssData.unknownDate" />
