@@ -57,20 +57,5 @@
   },
   "lint-staged": {
     "*": "eslint --fix"
-  },
-  "eslintConfig": {
-    "extends": [
-      "kaho/vue",
-      "@unocss"
-    ],
-    "rules": {
-      "no-console": "off"
-    },
-    "parserOptions": {
-      "project": "./tsconfig.json",
-      "extraFileExtensions": [
-        ".vue"
-      ]
-    }
   }
 }

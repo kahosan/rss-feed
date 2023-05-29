@@ -1,0 +1,16 @@
+{
+  "root": true,
+  "extends": [
+    "kaho/vue",
+    "@unocss"
+  ],
+  "rules": {
+    "no-console": "off"
+  },
+  "parserOptions": {
+    "project": "./tsconfig.json",
+    "extraFileExtensions": [
+      ".vue"
+    ]
+  }
+}
