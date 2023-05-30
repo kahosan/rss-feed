@@ -6,10 +6,8 @@
 
 :root {
   --c-bg: #fff;
-  --c-scrollbar: #eee;
-  --c-scrollbar-hover: #bbb;
   --c-h1-color: #00000028;
-  --c-h2-color: #5c5c5c;
+  --text-sec-color: #5c5c5c;
 }
 
 html {
@@ -23,10 +21,8 @@ html {
 
 html.dark {
   --c-bg: #1d1c1c;
-  --c-scrollbar: #1d1c1c;
-  --c-scrollbar-hover: #1f1e1e;
   --c-h1-color: #d1d1d121;
-  --c-h2-color: #a8a8a8;
+  --text-sec-color: #a8a8a8;
   --input-color-focus: #272626 !important;
   color-scheme: dark;
 }
@@ -37,19 +33,6 @@ body {
 
 h1 {
   color: var(--c-h1-color);
-}
-
-h2,
-h3 {
-  color: var(--c-h2-color);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--c-scrollbar);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--c-scrollbar-hover);
 }
 
 .n-input {

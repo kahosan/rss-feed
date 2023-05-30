@@ -4,7 +4,7 @@ defineProps<{ data: UnknownDate }>()
 </script>
 
 <template>
-  <div text-5 color="[var(--c-h2-color)]">
+  <div text-5>
     <div mb-4>
       <div v-for="entry in data" :key="entry.id" mb-8>
         <div flex="~ justify-between" min-h-14>

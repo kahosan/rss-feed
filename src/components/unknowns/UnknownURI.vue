@@ -5,7 +5,7 @@ const sp = (str: string, index: number) => str.split(' | ').at(index)
 
 <template>
   <div>
-    <div text-5 color="[var(--c-h2-color)]">
+    <div text-5>
       <div v-for="entry in data" :key="entry" mb-4 overflow-hidden>
         <p op-40>
           {{ sp(entry, 1) }}
