@@ -17,13 +17,13 @@ const fuseOptions = ref<FuseOptions>({
 const target = ref<HTMLDivElement | null>(null)
 const result = ref<RssEntry[]>([])
 
+// 当 result 变化时，重新调用一次 lazyData，同时返回 lazyData 中响应式 切片数据
+const displayData = computed(() => lazyData(target, result.value, 20, 10, { threshold: 0.1, rootMargin: '0px 0px 100px 0px' }).value)
+
 const handleSearch = () => {
   const fuse = new Fuse(contents.map(item => item.entries).flat(), fuseOptions.value)
   result.value = fuse.search(searchQuery.value).map(item => item.item)
 }
-
-// 当 result 变化时，重新调用一次 lazyData，同时返回 lazyData 中响应式 切片数据
-const displayData = computed(() => lazyData(target, result.value, 20, 10, { threshold: 0.1, rootMargin: '0px 0px 100px 0px' }).value)
 </script>
 
 <template>
@@ -38,7 +38,7 @@ const displayData = computed(() => lazyData(target, result.value, 20, 10, { thre
             <div class="i-carbon-search" cursor-pointer text-4 transition hover:op-60 @click="handleSearch" />
           </template>
         </NInput>
-        <SearchOptions v-model="fuseOptions" />
+        <SearchOptions v-model="fuseOptions" :on-enter="handleSearch" />
       </div>
       <div>
         <DataView date-type="year" :display-data="displayData" />

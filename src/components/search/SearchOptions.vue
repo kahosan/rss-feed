@@ -2,6 +2,7 @@
 import { NCheckbox, NCheckboxGroup, NInputNumber } from 'naive-ui'
 import type { FuseOptions } from '~/types/fuse'
 
+defineProps<{ onEnter: () => void }>()
 const modelValue = defineModel<FuseOptions>()
 
 const options = ref<FuseOptions>({ ...modelValue.value })
@@ -30,7 +31,19 @@ watch(
     </NCheckboxGroup>
     <div w-30 flex items-center>
       匹配阈值
-      <NInputNumber ml-2 flex-1 :autosize="true" :show-button="false" :bordered="false" max="1" min="0" size="small" placeholder="0 - 1" @change="e => options.threshold = e ?? 0.6" />
+      <NInputNumber
+        ml-2
+        flex-1
+        :autosize="true"
+        :show-button="false"
+        :bordered="false"
+        max="1"
+        min="0"
+        size="small"
+        placeholder="0 - 1"
+        @change="e => options.threshold = e ?? 0.6"
+        @keyup.enter="onEnter"
+      />
     </div>
   </div>
 </template>
