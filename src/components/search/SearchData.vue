@@ -20,10 +20,20 @@ const result = ref<RssEntry[]>([])
 // 当 result 变化时，重新调用一次 lazyData，同时返回 lazyData 中响应式 切片数据
 const displayData = computed(() => lazyData(target, result.value, 20, 10, { threshold: 0.1, rootMargin: '0px 0px 100px 0px' }).value)
 
+let timeId: number
 const handleSearch = () => {
-  const fuse = new Fuse(contents.map(item => item.entries).flat(), fuseOptions.value)
-  result.value = fuse.search(searchQuery.value).map(item => item.item)
+  if (displayData.value)
+    result.value = []
+
+  timeId = window.setTimeout(() => {
+    const fuse = new Fuse(contents.map(item => item.entries).flat(), fuseOptions.value)
+    result.value = fuse.search(searchQuery.value).map(item => item.item)
+  }, 100)
 }
+
+onUnmounted(() => {
+  clearTimeout(timeId)
+})
 </script>
 
 <template>
