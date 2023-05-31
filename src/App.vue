@@ -23,7 +23,7 @@ const yearData = (year: number) => {
 const source = ref<DataSource>('default')
 const active = (s: DataSource) => source.value === s
 
-const changeSource = (s: typeof source.value) => {
+const changeSource = (s: DataSource) => {
   source.value = s
 }
 

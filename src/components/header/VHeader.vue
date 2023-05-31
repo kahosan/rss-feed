@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { DataSource } from '~/types/source'
-defineProps<{ changeSource: (s: DataSource) => void; active: (s: DataSource) => boolean }>()
+const { active } = defineProps<{ changeSource: (s: DataSource) => void; active: (s: DataSource) => boolean }>()
+const isActive = (s: DataSource) => active(s) && 'op-60'
 </script>
 
 <template>
@@ -11,20 +12,20 @@ defineProps<{ changeSource: (s: DataSource) => void; active: (s: DataSource) => 
       </h2>
       <div flex="~ items-center">
         <div text-3.5 children:pr-4 children:transition>
-          <button :class="active('search') ? 'op-60' : ''" @click="() => changeSource('search')">
+          <button :class="isActive('search')" @click="() => changeSource('search')">
             搜索
           </button>
-          <button :class="active('default') ? 'op-60' : ''" @click="() => changeSource('default')">
+          <button :class="isActive('default')" @click="() => changeSource('default')">
             默认
           </button>
-          <button :class="active('unknownDate') ? 'op-60' : ''" @click="() => changeSource('unknownDate')">
+          <button :class="isActive('unknownDate')" @click="() => changeSource('unknownDate')">
             未知时间
           </button>
-          <button :class="active('unknownURI') ? 'op-60' : ''" @click="() => changeSource('unknownURI')">
+          <button :class="isActive('unknownURI')" @click="() => changeSource('unknownURI')">
             失败列表
           </button>
         </div>
-        <div i-carbon-moon dark:i-carbon-sun cursor-pointer transition-300 hover:op-60 @click="() => toggleDark()" />
+        <div i-carbon-moon cursor-pointer transition-300 dark:i-carbon-sun hover:op-60 @click="() => toggleDark()" />
       </div>
     </div>
   </div>

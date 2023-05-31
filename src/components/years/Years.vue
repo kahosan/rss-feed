@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 import type { RssData } from '~/types/rss'
 
-const props = defineProps<{ year: number; yearData: RssData['contents'] }>()
+const { yearData } = defineProps<{ year: number; yearData: RssData['contents'] }>()
 
-const months = props.yearData.map(content => content.month)
+const months = yearData.map(content => content.month)
 
 const getMonthData = (month: number) => {
   const entries = []
 
-  for (const content of props.yearData) {
+  for (const content of yearData) {
     if (content.month === month)
       entries.push(...content.entries)
   }

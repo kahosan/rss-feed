@@ -2,10 +2,10 @@
 import { lazyData } from '~/composables/lazy'
 import type { RssEntry } from '~/types/rss'
 
-const props = defineProps<{ monthDayData: RssEntry[] }>()
+const { monthDayData } = defineProps<{ monthDayData: RssEntry[] }>()
 
 const target = ref<HTMLDivElement | null>(null)
-const displayData = lazyData(target, props.monthDayData, 10, 10, { threshold: 0.1, rootMargin: '0px 0px 100px 0px' })
+const displayData = lazyData(target, monthDayData, 10, 10, { threshold: 0.1, rootMargin: '0px 0px 100px 0px' })
 </script>
 
 <template>
