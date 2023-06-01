@@ -13,7 +13,7 @@ const date = (monthDay: string, published: string | Date) => {
 <template>
   <div v-for="entry in displayData" :key="entry.id" mb-8>
     <div flex="~ justify-between" min-h-14>
-      <div overflow-hidden>
+      <div max-w-xl overflow-hidden>
         <a target="_blank" :href="entry.postLink" cursor-pointer text-5 transition hover:op-60>{{ entry.postTitle }}</a>
         <p max-w-140 truncate text-3.5 op-60>
           {{ entry.description }}
