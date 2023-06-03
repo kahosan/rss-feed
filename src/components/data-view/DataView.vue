@@ -1,4 +1,5 @@
 <script setup lang="ts" generic="T extends RssEntry">
+import pangu from 'pangu'
 import { getYear } from 'date-fns'
 import { RssEntry } from '~/types/rss'
 
@@ -14,9 +15,9 @@ const date = (monthDay: string, published: string | Date) => {
   <div v-for="entry in displayData" :key="entry.id" mb-8>
     <div flex="~ justify-between items-center" min-h-14>
       <div max-w-xl overflow-hidden>
-        <a target="_blank" :href="entry.postLink" cursor-pointer text-5 font-bold transition hover:op-60>{{ entry.postTitle }}</a>
+        <a target="_blank" :href="entry.postLink" cursor-pointer text-5 font-bold transition hover:op-60>{{ pangu.spacing(entry.postTitle) }}</a>
         <p max-w-140 truncate text-3.5 op-60>
-          {{ entry.description }}
+          {{ entry.description || '没有描述' }}
         </p>
       </div>
       <div ml-4 max-w-28 min-w-28 overflow-hidden text-4 text-secondary>

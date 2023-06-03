@@ -26,6 +26,9 @@ dependencies:
   p-limit:
     specifier: ^4.0.0
     version: 4.0.0
+  pangu:
+    specifier: ^4.0.7
+    version: 4.0.7
   vue:
     specifier: ^3.3.2
     version: 3.3.2
@@ -37,6 +40,9 @@ devDependencies:
   '@types/node':
     specifier: ^18.16.16
     version: 18.16.16
+  '@types/pangu':
+    specifier: ^4.0.0
+    version: 4.0.0
   '@unocss/eslint-config':
     specifier: ^0.52.5
     version: 0.52.5(eslint@8.41.0)(typescript@5.0.4)
@@ -835,6 +841,10 @@ packages:
 
   /@types/normalize-package-data@2.4.1:
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==}
+    dev: true
+
+  /@types/pangu@4.0.0:
+    resolution: {integrity: sha512-da3b6P7QDH41VdfF2xRE8/KgL06nX3RawfiIMAvJ/sYzLWQCQtxc+B3qWVtrIlrNlSgV/e1oG2SZYUpN6gvmhQ==}
     dev: true
 
   /@types/semver@7.3.13:
@@ -4783,6 +4793,11 @@ packages:
       - bluebird
       - supports-color
     dev: true
+
+  /pangu@4.0.7:
+    resolution: {integrity: sha512-weZKJIwwy5gjt4STGVUH9bix3BGk7wZ2ahtIypwe3e/mllsrIZIvtfLx1dPX56GcpZFOCFKmeqI1qVuB9enRzA==}
+    hasBin: true
+    dev: false
 
   /parent-module@1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
