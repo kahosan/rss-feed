@@ -17,7 +17,7 @@ interface F extends Required<FeedData> {
   entries: (Required<FeedEntry> & { content: string })[]
 }
 
-const limit = plimit(10)
+const limit = plimit(4)
 
 const headers = new Headers({
   'User-Agent': 'YJSNPI-RSS-Reader/1.0',
