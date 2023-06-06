@@ -44,6 +44,17 @@ export default defineConfig({
     UnoCSS(),
   ],
 
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('rss_data'))
+            return 'rss_data'
+        },
+      },
+    },
+  },
+
   // https://github.com/vitest-dev/vitest
   test: {
     environment: 'jsdom',
