@@ -1,15 +1,30 @@
 <script lang="ts" setup>
+import { NDropdown } from 'naive-ui'
 import type { DataSource } from '~/types/source'
-const { active } = defineProps<{ changeSource: (s: DataSource) => void; active: (s: DataSource) => boolean }>()
+
+const { active, tocYears } = defineProps<{
+  changeSource: (s: DataSource) => void
+  active: (s: DataSource) => boolean
+  tocYears: number[]
+  changeYear: (year: number) => void
+}>()
+
 const isActive = (s: DataSource) => active(s) && 'op-60'
+
+const options = tocYears.map(year => ({
+  label: year.toString(),
+  key: year,
+}))
 </script>
 
 <template>
   <div bg="#ebebeb" dark:bg="#272626" h-14 flex items-center p-4>
     <div mx-auto max-w-6xl flex="~ 1 justify-between items-center">
-      <h2 text-5>
-        RSS Feed
-      </h2>
+      <NDropdown size="large" trigger="click" :options="options" @select="changeYear">
+        <h2 cursor-pointer text-5>
+          RSS Feed
+        </h2>
+      </NDropdown>
       <div flex="~ items-center">
         <div text-3.5 children:pr-4 children:transition>
           <button :class="isActive('search')" @click="() => changeSource('search')">

@@ -7,7 +7,12 @@ import rss_data from '~/assets/rss_data.json'
 
 const rssData = rss_data as unknown as RssData ?? {}
 
-const years = [...new Set(rss_data.contents.map(content => content.year))]
+const years = ref([...new Set(rss_data.contents.map(content => content.year))])
+
+const tocYears = toValue(years)
+const changeYear = (year: number) => {
+  years.value = tocYears.filter(y => y <= year)
+}
 
 const yearData = (year: number) => {
   const contents = []
@@ -28,33 +33,33 @@ const changeSource = (s: DataSource) => {
 }
 
 const target = ref<HTMLDivElement | null>(null)
-const displayDataByYear = lazyData(target, years, 0, 1, { threshold: 0.1 })
+const displayDataByYear = computed(() => lazyData(target, years.value, 0, 1, { threshold: 0.1 }).value)
 </script>
 
 <template>
-  <VHeader :change-source="changeSource" :active="active" />
-  <main p-4>
-    <div v-if="rssData.contents" relative mx-auto max-w-6xl>
-      <div v-if="source === 'default'">
-        <div v-for="year in displayDataByYear" :key="year">
-          <Years :year="year" :year-data="yearData(year)" />
+  <NConfigProvider :theme="isDark ? darkTheme : null">
+    <VHeader :change-source="changeSource" :active="active" :toc-years="tocYears" :change-year="changeYear" />
+    <main p-4>
+      <div v-if="rssData.contents" relative mx-auto max-w-6xl>
+        <div v-if="source === 'default'">
+          <div v-for="year in displayDataByYear" :key="year">
+            <Years :year="year" :year-data="yearData(year)" />
+          </div>
+          <div ref="target" />
         </div>
-        <div ref="target" />
-      </div>
-      <div v-else-if="source === 'search'">
-        <NConfigProvider :theme="isDark ? darkTheme : null">
+        <div v-else-if="source === 'search'">
           <SearchData />
-        </NConfigProvider>
+        </div>
+        <div v-else-if="source === 'unknownDate'">
+          <UnknownDate :data="rssData.unknownDate" />
+        </div>
+        <div v-else-if="source === 'unknownURI'">
+          <UnknownURI :data="rssData.unknownURI" />
+        </div>
       </div>
-      <div v-else-if="source === 'unknownDate'">
-        <UnknownDate :data="rssData.unknownDate" />
+      <div v-else>
+        没有数据
       </div>
-      <div v-else-if="source === 'unknownURI'">
-        <UnknownURI :data="rssData.unknownURI" />
-      </div>
-    </div>
-    <div v-else>
-      没有数据
-    </div>
-  </main>
+    </main>
+  </NConfigProvider>
 </template>
