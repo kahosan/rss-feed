@@ -57,5 +57,10 @@
     "src/**/*.{js,cjs,mjs,ts,cts,mts}": [
       "eslint --fix"
     ]
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@extractus/feed-extractor@6.2.2": "patches/@extractus__feed-extractor@6.2.2.patch"
+    }
   }
 }

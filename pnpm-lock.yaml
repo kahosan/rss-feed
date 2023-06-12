@@ -4,10 +4,15 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@extractus/feed-extractor@6.2.2':
+    hash: ufzj6xhpksyl3nbhhlbuy35zq4
+    path: patches/@extractus__feed-extractor@6.2.2.patch
+
 dependencies:
   '@extractus/feed-extractor':
     specifier: ^6.2.2
-    version: 6.2.2
+    version: 6.2.2(patch_hash=ufzj6xhpksyl3nbhhlbuy35zq4)
   '@vueuse/core':
     specifier: ^10.1.2
     version: 10.1.2(vue@3.3.2)
@@ -496,7 +501,7 @@ packages:
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
 
-  /@extractus/feed-extractor@6.2.2:
+  /@extractus/feed-extractor@6.2.2(patch_hash=ufzj6xhpksyl3nbhhlbuy35zq4):
     resolution: {integrity: sha512-aMQ25XMllrnVdWGwqCCadQ2rZhgrxusTO09MHqP8ATm86S3GT5Uq5XCYjOG4qVqQ238ZfqTaIxK4pUzo0PftwQ==}
     engines: {node: '>= 14'}
     dependencies:
@@ -507,6 +512,7 @@ packages:
     transitivePeerDependencies:
       - encoding
     dev: false
+    patched: true
 
   /@fluffyfox/eslint-plugin@0.1.0(eslint@8.41.0):
     resolution: {integrity: sha512-akpFZb5VGXaja0zrndWNsp8pjxGVNvhmT34sk9MsXAVrVlv7LB4pqfSGJ684y6kR2FIDsT1cVcPIbGuD5W00Sg==}

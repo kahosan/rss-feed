@@ -1,0 +1,975 @@
+diff --git a/dist/cjs/feed-extractor.js b/dist/cjs/feed-extractor.js
+index 255247f0453ae8a271fb3de853b49e371163bc92..9ba1262850dc3525bfe9c8d3adf9b107f4de4db5 100644
+--- a/dist/cjs/feed-extractor.js
++++ b/dist/cjs/feed-extractor.js
+@@ -1,4 +1,4 @@
+-// @extractus/feed-extractor@6.2.2, by @extractus - built with esbuild at 2023-05-11T13:00:40.815Z - published under MIT license
++// @extractus/feed-extractor@6.2.2, by @extractus - built with esbuild at 2023-06-12T03:31:52.335Z - published under MIT license
+ var __create = Object.create;
+ var __defProp = Object.defineProperty;
+ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+@@ -5129,9 +5129,18 @@ var getLink = (val2 = [], id = "") => {
+   };
+   return isString(val2) ? getText(val2) : isObject(val2) && hasProperty(val2, "href") ? getText(val2.href) : isObject(val2) && hasProperty(val2, "@_href") ? getText(val2["@_href"]) : isObject(val2) && hasProperty(val2, "@_url") ? getText(val2["@_url"]) : isObject(val2) && hasProperty(val2, "_attributes") ? getText(val2._attributes.href) : isArray(val2) ? getEntryLink(val2) : "";
+ };
+-var getPureUrl = (url, id = "") => {
++var getHref = (url, hostname) => {
++  let u = "";
++  try {
++    u = new URL(url, hostname).href;
++  } catch {
++  }
++  return u;
++};
++var getPureUrl = (url, id = "", hostname) => {
+   const link = getLink(url, id);
+-  return link ? purify(link) : "";
++  const pu = purify(link);
++  return link ? pu ? pu : getHref(link, hostname) : "";
+ };
+ var hash = (str) => Math.abs(str.split("").reduce((s, c) => Math.imul(31, s) + c.charCodeAt(0) | 0, 0)).toString(36);
+ var getEntryId = (id, url, pubDate) => {
+@@ -5170,7 +5179,7 @@ var getOptionalTags = (val2, key) => {
+ };
+ 
+ // src/utils/parseJsonFeed.js
+-var transform = (item, options) => {
++var transform = (item, options, hostname) => {
+   const {
+     useISODateFormat,
+     descriptionMaxLen,
+@@ -5190,7 +5199,7 @@ var transform = (item, options) => {
+   const entry = {
+     id: getEntryId(id, link, pubDate),
+     title,
+-    link: purify(link),
++    link: purify(link) || getHref(link, hostname),
+     published,
+     description: buildDescription(textContent || htmlContent || summary, descriptionMaxLen)
+   };
+@@ -5199,7 +5208,7 @@ var transform = (item, options) => {
+     ...extraFields
+   };
+ };
+-var parseJson = (data, options) => {
++var parseJson = (data, options, hostname) => {
+   const {
+     normalization,
+     getExtraFeedFields
+@@ -5218,23 +5227,23 @@ var parseJson = (data, options) => {
+   const items = isArray(item) ? item : [item];
+   return {
+     title,
+-    link: purify(homepageUrl),
++    link: purify(homepageUrl) || getHref(homepageUrl, hostname),
+     description,
+     language,
+     published: "",
+     generator: "",
+     ...extraFields,
+     entries: items.map((item2) => {
+-      return transform(item2, options);
++      return transform(item2, options, hostname);
+     })
+   };
+ };
+-var parseJsonFeed_default = (data, options = {}) => {
+-  return parseJson(data, options);
++var parseJsonFeed_default = (data, options = {}, hostname) => {
++  return parseJson(data, options, hostname);
+ };
+ 
+ // src/utils/parseRssFeed.js
+-var transform2 = (item, options) => {
++var transform2 = (item, options, hostname) => {
+   const {
+     useISODateFormat,
+     descriptionMaxLen,
+@@ -5251,7 +5260,7 @@ var transform2 = (item, options) => {
+   const entry = {
+     id: getEntryId(guid, link, pubDate),
+     title: getText(title),
+-    link: getPureUrl(link, guid),
++    link: getPureUrl(link, guid, hostname),
+     published,
+     description: buildDescription(description, descriptionMaxLen)
+   };
+@@ -5261,7 +5270,7 @@ var transform2 = (item, options) => {
+     ...extraFields
+   };
+ };
+-var flatten = (feed) => {
++var flatten = (feed, hostname) => {
+   const {
+     title = "",
+     link = "",
+@@ -5277,7 +5286,7 @@ var flatten = (feed) => {
+     const item2 = {
+       ...entry,
+       title: getText(title2),
+-      link: getPureUrl(link2, id)
++      link: getPureUrl(link2, id, hostname)
+     };
+     const txtTags = "guid description source".split(" ");
+     txtTags.forEach((key) => {
+@@ -5296,18 +5305,18 @@ var flatten = (feed) => {
+   const output = {
+     ...feed,
+     title: getText(title),
+-    link: getPureUrl(link),
++    link: getPureUrl(link, hostname),
+     item: isArray(item) ? entries : entries[0]
+   };
+   return output;
+ };
+-var parseRss = (data, options = {}) => {
++var parseRss = (data, options = {}, hostname) => {
+   const {
+     normalization,
+     getExtraFeedFields
+   } = options;
+   if (!normalization) {
+-    return flatten(data.rss.channel);
++    return flatten(data.rss.channel, hostname);
+   }
+   const {
+     title = "",
+@@ -5323,23 +5332,23 @@ var parseRss = (data, options = {}) => {
+   const published = options.useISODateFormat ? toISODateString(lastBuildDate) : lastBuildDate;
+   return {
+     title: getText(title),
+-    link: getPureUrl(link),
++    link: getPureUrl(link, "", hostname),
+     description,
+     language,
+     generator,
+     published,
+     ...extraFields,
+     entries: items.map((item2) => {
+-      return transform2(item2, options);
++      return transform2(item2, options, hostname);
+     })
+   };
+ };
+-var parseRssFeed_default = (data, options = {}) => {
+-  return parseRss(data, options);
++var parseRssFeed_default = (data, options = {}, hostname) => {
++  return parseRss(data, options, hostname);
+ };
+ 
+ // src/utils/parseAtomFeed.js
+-var transform3 = (item, options) => {
++var transform3 = (item, options, hostname) => {
+   const {
+     useISODateFormat,
+     descriptionMaxLen,
+@@ -5361,7 +5370,7 @@ var transform3 = (item, options) => {
+   const entry = {
+     id: getEntryId(id, link, pubDate),
+     title: getText(title),
+-    link: getPureUrl(link, id),
++    link: getPureUrl(link, id, hostname),
+     published: useISODateFormat ? toISODateString(pubDate) : pubDate,
+     description: buildDescription(htmlContent || summary, descriptionMaxLen)
+   };
+@@ -5371,7 +5380,7 @@ var transform3 = (item, options) => {
+     ...extraFields
+   };
+ };
+-var flatten2 = (feed) => {
++var flatten2 = (feed, hostname) => {
+   const {
+     id,
+     title = "",
+@@ -5390,7 +5399,7 @@ var flatten2 = (feed) => {
+     const item = {
+       ...entry2,
+       title: getText(title2),
+-      link: getPureUrl(link2, id2)
++      link: getPureUrl(link2, id2, hostname)
+     };
+     if (hasProperty(item, "summary")) {
+       item.summary = getText(summary);
+@@ -5403,18 +5412,18 @@ var flatten2 = (feed) => {
+   const output = {
+     ...feed,
+     title: getText(title),
+-    link: getPureUrl(link, id),
++    link: getPureUrl(link, id, hostname),
+     entry: isArray(entry) ? items : items[0]
+   };
+   return output;
+ };
+-var parseAtom = (data, options = {}) => {
++var parseAtom = (data, options = {}, hostname) => {
+   const {
+     normalization,
+     getExtraFeedFields
+   } = options;
+   if (!normalization) {
+-    return flatten2(data.feed);
++    return flatten2(data.feed, hostname);
+   }
+   const {
+     id = "",
+@@ -5431,19 +5440,19 @@ var parseAtom = (data, options = {}) => {
+   const published = options.useISODateFormat ? toISODateString(updated) : updated;
+   return {
+     title: getText(title),
+-    link: getPureUrl(link, id),
++    link: getPureUrl(link, id, hostname),
+     description: subtitle,
+     language,
+     generator,
+     published,
+     ...extraFields,
+     entries: items.map((item2) => {
+-      return transform3(item2, options);
++      return transform3(item2, options, hostname);
+     })
+   };
+ };
+-var parseAtomFeed_default = (data, options = {}) => {
+-  return parseAtom(data, options);
++var parseAtomFeed_default = (data, options = {}, hostname) => {
++  return parseAtom(data, options, hostname);
+ };
+ 
+ // src/main.js
+@@ -5465,27 +5474,29 @@ var getopt = (options = {}) => {
+     getExtraEntryFields
+   };
+ };
+-var extractFromJson = (json, options = {}) => {
+-  return parseJsonFeed_default(json, getopt(options));
++var extractFromJson = (json, options = {}, hostname = "") => {
++  return parseJsonFeed_default(json, getopt(options), hostname);
+ };
+-var extractFromXml = (xml, options = {}) => {
++var extractFromXml = (xml, options = {}, hostname = "") => {
+   if (!validate(xml)) {
+     throw new Error("The XML document is not well-formed");
+   }
+   const opts = getopt(options);
+   const data = xml2obj(xml, opts.xmlParserOptions);
+-  return isRSS(data) ? parseRssFeed_default(data, opts) : isAtom(data) ? parseAtomFeed_default(data, opts) : null;
++  return isRSS(data) ? parseRssFeed_default(data, opts, hostname) : isAtom(data) ? parseAtomFeed_default(data, opts, hostname) : null;
+ };
+ var extract = async (url, options = {}, fetchOptions = {}) => {
+   if (!isValid(url)) {
+     throw new Error("Input param must be a valid URL");
+   }
++  const u = new URL(url);
++  const hostname = u.protocol + "//" + u.hostname;
+   const data = await retrieve_default(url, fetchOptions);
+   if (!data.text && !data.json) {
+     throw new Error(`Failed to load content from "${url}"`);
+   }
+   const { type, json, text } = data;
+-  return type === "json" ? extractFromJson(json, options) : extractFromXml(text, options);
++  return type === "json" ? extractFromJson(json, options, hostname) : extractFromXml(text, options, hostname);
+ };
+ var read = async (url, options, fetchOptions) => {
+   console.warn("WARNING: read() is deprecated. Please use extract() instead!");
+diff --git a/dist/cjs/index.d.ts b/dist/cjs/index.d.ts
+index 57756ef114d5080c42db998d58d0dfcd499adbb7..4c59c54cb89925c892dc52553a53925b8160c16b 100755
+--- a/dist/cjs/index.d.ts
++++ b/dist/cjs/index.d.ts
+@@ -72,8 +72,8 @@ export interface FetchOptions {
+   proxy?: ProxyConfig;
+ }
+ 
+-export function extractFromXml(xml: string, options?: ReaderOptions): FeedData;
+-export function extractFromJson(json: string, options?: ReaderOptions): FeedData;
++export function extractFromXml(xml: string, options?: ReaderOptions, hostname?: string): FeedData;
++export function extractFromJson(json: string, options?: ReaderOptions, hostname?: string): FeedData;
+ 
+ export function extract(url: string, options?: ReaderOptions, fetchOptions?: FetchOptions): Promise<FeedData>;
+ 
+diff --git a/dist/feed-extractor.esm.js b/dist/feed-extractor.esm.js
+index 2fd52a91d93558b785ca19b9001423d8a028b171..cfe28a045ab2d806d6e9a8b7b135a827f21147c8 100644
+--- a/dist/feed-extractor.esm.js
++++ b/dist/feed-extractor.esm.js
+@@ -1,4 +1,4 @@
+-// @extractus/feed-extractor@6.2.2, by @extractus - built with esbuild at 2023-05-11T13:00:40.815Z - published under MIT license
++// @extractus/feed-extractor@6.2.2, by @extractus - built with esbuild at 2023-06-12T03:31:52.335Z - published under MIT license
+ var __create = Object.create;
+ var __defProp = Object.defineProperty;
+ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+@@ -2132,9 +2132,18 @@ var getLink = (val2 = [], id = "") => {
+   };
+   return isString(val2) ? getText(val2) : isObject(val2) && hasProperty(val2, "href") ? getText(val2.href) : isObject(val2) && hasProperty(val2, "@_href") ? getText(val2["@_href"]) : isObject(val2) && hasProperty(val2, "@_url") ? getText(val2["@_url"]) : isObject(val2) && hasProperty(val2, "_attributes") ? getText(val2._attributes.href) : isArray(val2) ? getEntryLink(val2) : "";
+ };
+-var getPureUrl = (url, id = "") => {
++var getHref = (url, hostname) => {
++  let u = "";
++  try {
++    u = new URL(url, hostname).href;
++  } catch {
++  }
++  return u;
++};
++var getPureUrl = (url, id = "", hostname) => {
+   const link = getLink(url, id);
+-  return link ? purify(link) : "";
++  const pu = purify(link);
++  return link ? pu ? pu : getHref(link, hostname) : "";
+ };
+ var hash = (str) => Math.abs(str.split("").reduce((s, c) => Math.imul(31, s) + c.charCodeAt(0) | 0, 0)).toString(36);
+ var getEntryId = (id, url, pubDate) => {
+@@ -2173,7 +2182,7 @@ var getOptionalTags = (val2, key) => {
+ };
+ 
+ // src/utils/parseJsonFeed.js
+-var transform = (item, options) => {
++var transform = (item, options, hostname) => {
+   const {
+     useISODateFormat,
+     descriptionMaxLen,
+@@ -2193,7 +2202,7 @@ var transform = (item, options) => {
+   const entry = {
+     id: getEntryId(id, link, pubDate),
+     title,
+-    link: purify(link),
++    link: purify(link) || getHref(link, hostname),
+     published,
+     description: buildDescription(textContent || htmlContent || summary, descriptionMaxLen)
+   };
+@@ -2202,7 +2211,7 @@ var transform = (item, options) => {
+     ...extraFields
+   };
+ };
+-var parseJson = (data, options) => {
++var parseJson = (data, options, hostname) => {
+   const {
+     normalization,
+     getExtraFeedFields
+@@ -2221,23 +2230,23 @@ var parseJson = (data, options) => {
+   const items = isArray(item) ? item : [item];
+   return {
+     title,
+-    link: purify(homepageUrl),
++    link: purify(homepageUrl) || getHref(homepageUrl, hostname),
+     description,
+     language,
+     published: "",
+     generator: "",
+     ...extraFields,
+     entries: items.map((item2) => {
+-      return transform(item2, options);
++      return transform(item2, options, hostname);
+     })
+   };
+ };
+-var parseJsonFeed_default = (data, options = {}) => {
+-  return parseJson(data, options);
++var parseJsonFeed_default = (data, options = {}, hostname) => {
++  return parseJson(data, options, hostname);
+ };
+ 
+ // src/utils/parseRssFeed.js
+-var transform2 = (item, options) => {
++var transform2 = (item, options, hostname) => {
+   const {
+     useISODateFormat,
+     descriptionMaxLen,
+@@ -2254,7 +2263,7 @@ var transform2 = (item, options) => {
+   const entry = {
+     id: getEntryId(guid, link, pubDate),
+     title: getText(title),
+-    link: getPureUrl(link, guid),
++    link: getPureUrl(link, guid, hostname),
+     published,
+     description: buildDescription(description, descriptionMaxLen)
+   };
+@@ -2264,7 +2273,7 @@ var transform2 = (item, options) => {
+     ...extraFields
+   };
+ };
+-var flatten = (feed) => {
++var flatten = (feed, hostname) => {
+   const {
+     title = "",
+     link = "",
+@@ -2280,7 +2289,7 @@ var flatten = (feed) => {
+     const item2 = {
+       ...entry,
+       title: getText(title2),
+-      link: getPureUrl(link2, id)
++      link: getPureUrl(link2, id, hostname)
+     };
+     const txtTags = "guid description source".split(" ");
+     txtTags.forEach((key) => {
+@@ -2299,18 +2308,18 @@ var flatten = (feed) => {
+   const output = {
+     ...feed,
+     title: getText(title),
+-    link: getPureUrl(link),
++    link: getPureUrl(link, hostname),
+     item: isArray(item) ? entries : entries[0]
+   };
+   return output;
+ };
+-var parseRss = (data, options = {}) => {
++var parseRss = (data, options = {}, hostname) => {
+   const {
+     normalization,
+     getExtraFeedFields
+   } = options;
+   if (!normalization) {
+-    return flatten(data.rss.channel);
++    return flatten(data.rss.channel, hostname);
+   }
+   const {
+     title = "",
+@@ -2326,23 +2335,23 @@ var parseRss = (data, options = {}) => {
+   const published = options.useISODateFormat ? toISODateString(lastBuildDate) : lastBuildDate;
+   return {
+     title: getText(title),
+-    link: getPureUrl(link),
++    link: getPureUrl(link, "", hostname),
+     description,
+     language,
+     generator,
+     published,
+     ...extraFields,
+     entries: items.map((item2) => {
+-      return transform2(item2, options);
++      return transform2(item2, options, hostname);
+     })
+   };
+ };
+-var parseRssFeed_default = (data, options = {}) => {
+-  return parseRss(data, options);
++var parseRssFeed_default = (data, options = {}, hostname) => {
++  return parseRss(data, options, hostname);
+ };
+ 
+ // src/utils/parseAtomFeed.js
+-var transform3 = (item, options) => {
++var transform3 = (item, options, hostname) => {
+   const {
+     useISODateFormat,
+     descriptionMaxLen,
+@@ -2364,7 +2373,7 @@ var transform3 = (item, options) => {
+   const entry = {
+     id: getEntryId(id, link, pubDate),
+     title: getText(title),
+-    link: getPureUrl(link, id),
++    link: getPureUrl(link, id, hostname),
+     published: useISODateFormat ? toISODateString(pubDate) : pubDate,
+     description: buildDescription(htmlContent || summary, descriptionMaxLen)
+   };
+@@ -2374,7 +2383,7 @@ var transform3 = (item, options) => {
+     ...extraFields
+   };
+ };
+-var flatten2 = (feed) => {
++var flatten2 = (feed, hostname) => {
+   const {
+     id,
+     title = "",
+@@ -2393,7 +2402,7 @@ var flatten2 = (feed) => {
+     const item = {
+       ...entry2,
+       title: getText(title2),
+-      link: getPureUrl(link2, id2)
++      link: getPureUrl(link2, id2, hostname)
+     };
+     if (hasProperty(item, "summary")) {
+       item.summary = getText(summary);
+@@ -2406,18 +2415,18 @@ var flatten2 = (feed) => {
+   const output = {
+     ...feed,
+     title: getText(title),
+-    link: getPureUrl(link, id),
++    link: getPureUrl(link, id, hostname),
+     entry: isArray(entry) ? items : items[0]
+   };
+   return output;
+ };
+-var parseAtom = (data, options = {}) => {
++var parseAtom = (data, options = {}, hostname) => {
+   const {
+     normalization,
+     getExtraFeedFields
+   } = options;
+   if (!normalization) {
+-    return flatten2(data.feed);
++    return flatten2(data.feed, hostname);
+   }
+   const {
+     id = "",
+@@ -2434,19 +2443,19 @@ var parseAtom = (data, options = {}) => {
+   const published = options.useISODateFormat ? toISODateString(updated) : updated;
+   return {
+     title: getText(title),
+-    link: getPureUrl(link, id),
++    link: getPureUrl(link, id, hostname),
+     description: subtitle,
+     language,
+     generator,
+     published,
+     ...extraFields,
+     entries: items.map((item2) => {
+-      return transform3(item2, options);
++      return transform3(item2, options, hostname);
+     })
+   };
+ };
+-var parseAtomFeed_default = (data, options = {}) => {
+-  return parseAtom(data, options);
++var parseAtomFeed_default = (data, options = {}, hostname) => {
++  return parseAtom(data, options, hostname);
+ };
+ 
+ // src/main.js
+@@ -2468,27 +2477,29 @@ var getopt = (options = {}) => {
+     getExtraEntryFields
+   };
+ };
+-var extractFromJson = (json, options = {}) => {
+-  return parseJsonFeed_default(json, getopt(options));
++var extractFromJson = (json, options = {}, hostname = "") => {
++  return parseJsonFeed_default(json, getopt(options), hostname);
+ };
+-var extractFromXml = (xml, options = {}) => {
++var extractFromXml = (xml, options = {}, hostname = "") => {
+   if (!validate(xml)) {
+     throw new Error("The XML document is not well-formed");
+   }
+   const opts = getopt(options);
+   const data = xml2obj(xml, opts.xmlParserOptions);
+-  return isRSS(data) ? parseRssFeed_default(data, opts) : isAtom(data) ? parseAtomFeed_default(data, opts) : null;
++  return isRSS(data) ? parseRssFeed_default(data, opts, hostname) : isAtom(data) ? parseAtomFeed_default(data, opts, hostname) : null;
+ };
+ var extract = async (url, options = {}, fetchOptions = {}) => {
+   if (!isValid(url)) {
+     throw new Error("Input param must be a valid URL");
+   }
++  const u = new URL(url);
++  const hostname = u.protocol + "//" + u.hostname;
+   const data = await retrieve_default(url, fetchOptions);
+   if (!data.text && !data.json) {
+     throw new Error(`Failed to load content from "${url}"`);
+   }
+   const { type, json, text } = data;
+-  return type === "json" ? extractFromJson(json, options) : extractFromXml(text, options);
++  return type === "json" ? extractFromJson(json, options, hostname) : extractFromXml(text, options, hostname);
+ };
+ var read = async (url, options, fetchOptions) => {
+   console.warn("WARNING: read() is deprecated. Please use extract() instead!");
+diff --git a/index.d.ts b/index.d.ts
+index 57756ef114d5080c42db998d58d0dfcd499adbb7..4c59c54cb89925c892dc52553a53925b8160c16b 100755
+--- a/index.d.ts
++++ b/index.d.ts
+@@ -72,8 +72,8 @@ export interface FetchOptions {
+   proxy?: ProxyConfig;
+ }
+ 
+-export function extractFromXml(xml: string, options?: ReaderOptions): FeedData;
+-export function extractFromJson(json: string, options?: ReaderOptions): FeedData;
++export function extractFromXml(xml: string, options?: ReaderOptions, hostname?: string): FeedData;
++export function extractFromJson(json: string, options?: ReaderOptions, hostname?: string): FeedData;
+ 
+ export function extract(url: string, options?: ReaderOptions, fetchOptions?: FetchOptions): Promise<FeedData>;
+ 
+diff --git a/src/main.js b/src/main.js
+index edfaa911e4b19784efdde6b91a2dd8e580a0130a..307db7e9391a33eeacfdb9c2d858b3db78a29932 100755
+--- a/src/main.js
++++ b/src/main.js
+@@ -28,11 +28,11 @@ const getopt = (options = {}) => {
+   }
+ }
+ 
+-export const extractFromJson = (json, options = {}) => {
+-  return parseJsonFeed(json, getopt(options))
++export const extractFromJson = (json, options = {}, hostname = '') => {
++  return parseJsonFeed(json, getopt(options), hostname)
+ }
+ 
+-export const extractFromXml = (xml, options = {}) => {
++export const extractFromXml = (xml, options = {}, hostname = '') => {
+   if (!validate(xml)) {
+     throw new Error('The XML document is not well-formed')
+   }
+@@ -41,9 +41,9 @@ export const extractFromXml = (xml, options = {}) => {
+ 
+   const data = xml2obj(xml, opts.xmlParserOptions)
+   return isRSS(data)
+-    ? parseRssFeed(data, opts)
++    ? parseRssFeed(data, opts, hostname)
+     : isAtom(data)
+-      ? parseAtomFeed(data, opts)
++      ? parseAtomFeed(data, opts, hostname)
+       : null
+ }
+ 
+@@ -51,6 +51,9 @@ export const extract = async (url, options = {}, fetchOptions = {}) => {
+   if (!isValidUrl(url)) {
+     throw new Error('Input param must be a valid URL')
+   }
++
++  const u = new URL(url)
++  const hostname = u.protocol + '//' + u.hostname
+   const data = await retrieve(url, fetchOptions)
+   if (!data.text && !data.json) {
+     throw new Error(`Failed to load content from "${url}"`)
+@@ -58,7 +61,7 @@ export const extract = async (url, options = {}, fetchOptions = {}) => {
+ 
+   const { type, json, text } = data
+ 
+-  return type === 'json' ? extractFromJson(json, options) : extractFromXml(text, options)
++  return type === 'json' ? extractFromJson(json, options, hostname) : extractFromXml(text, options, hostname)
+ }
+ 
+ export const read = async (url, options, fetchOptions) => {
+diff --git a/src/main.test.js b/src/main.test.js
+index c33e6fd99ab3e26b3ee0eccf63961866152d0934..57e9e74f14677a4f3749a20c01239cd10d5f50e6 100644
+--- a/src/main.test.js
++++ b/src/main.test.js
+@@ -7,7 +7,7 @@ import nock from 'nock'
+ 
+ import { hasProperty, isString } from 'bellajs'
+ 
+-import { extract, read } from './main.js'
++import { extract, extractFromXml, extractFromJson, read } from './main.js'
+ import { isValid as isValidUrl } from './utils/linker.js'
+ 
+ const feedAttrs = 'title link description generator language published entries'.split(' ')
+@@ -336,6 +336,66 @@ describe('test extract() without normalization', () => {
+   })
+ })
+ 
++describe('test extract with hostname is not included', () => {
++  test('extract rss feed with xml', () => {
++    const hostname = 'https://huggingface.co'
++    const xml = readFileSync('test-data/rss-feed-miss-hostname.xml', 'utf8')
++    const result = extractFromXml(xml, {}, hostname)
++
++    feedAttrs.forEach((k) => {
++      expect(hasProperty(result, k)).toBe(true)
++    })
++
++    entryAttrs.forEach((k) => {
++      expect(hasProperty(result.entries[0], k)).toBe(true)
++    })
++
++    expect(validateProps(result.entries[0])).toBe(true)
++    expect(result.link).toBe(hostname + '/blog')
++    expect(result.entries[0].link).toBe(hostname + '/blog/intro-graphml')
++  })
++
++  test('extract rss feed with json', () => {
++    const hostname = 'https://www.jsonfeed.org'
++    const json = readFileSync('test-data/json-feed-miss-hostname.json', 'utf8')
++    const result = extractFromJson(JSON.parse(json), {}, hostname)
++
++    feedAttrs.forEach((k) => {
++      expect(hasProperty(result, k)).toBe(true)
++    })
++
++    entryAttrs.forEach((k) => {
++      expect(hasProperty(result.entries[0], k)).toBe(true)
++    })
++
++    expect(result.link).toBe(hostname + '/')
++    expect(result.entries[0].link).toBe(hostname + '/2020/08/07/json-feed-version.html')
++  })
++
++  test('extract rss feed with url', async () => {
++    const url = 'https://huggingface.co/blog/rss'
++    const hostname = "https://huggingface.co"
++    const xml = readFileSync('test-data/rss-feed-miss-hostname.xml', 'utf8')
++    const { baseUrl, path } = parseUrl(url)
++    nock(baseUrl).get(path).reply(200, xml, {
++      'Content-Type': 'application/xml',
++    })
++    const result = await extract(url)
++
++    feedAttrs.forEach((k) => {
++      expect(hasProperty(result, k)).toBe(true)
++    })
++
++    entryAttrs.forEach((k) => {
++      expect(hasProperty(result.entries[0], k)).toBe(true)
++    })
++
++    expect(validateProps(result.entries[0])).toBe(true)
++    expect(result.link).toBe(hostname + '/blog')
++    expect(result.entries[0].link).toBe(hostname + '/blog/intro-graphml')
++  })
++})
++
+ describe('check old method read()', () => {
+   test('ensure that depricated method read() still works', async () => {
+     const url = 'https://realworld-standard-feed.tld/rss'
+diff --git a/src/utils/normalizer.js b/src/utils/normalizer.js
+index 8aee00e2d30ec472ef4a82cfa45a9db046409804..262a843bae6dd4452eea2c9317bd8c711b3982f7 100644
+--- a/src/utils/normalizer.js
++++ b/src/utils/normalizer.js
+@@ -57,9 +57,27 @@ export const getLink = (val = [], id = '') => {
+             : isArray(val) ? getEntryLink(val) : ''
+ }
+ 
+-export const getPureUrl = (url, id = '') => {
++export const getHref = (url, hostname) => {
++  let u = ''
++
++  try {
++    u = new URL(url, hostname).href
++  } catch {
++    //
++  }
++
++  return u
++}
++
++export const getPureUrl = (url, id = '', hostname) => {
+   const link = getLink(url, id)
+-  return link ? purifyUrl(link) : ''
++  const pu = purifyUrl(link)
++
++  return link
++    ? pu
++      ? pu
++      : getHref(link, hostname)
++    : ''
+ }
+ 
+ const hash = (str) => Math.abs(str.split('').reduce((s, c) => Math.imul(31, s) + c.charCodeAt(0) | 0, 0)).toString(36)
+diff --git a/src/utils/parseAtomFeed.js b/src/utils/parseAtomFeed.js
+index 46e63b4ed3dcb968567d49f6d00a92f2dba3876f..d96d93eda493f853bb74326785ac6e3a109109d3 100644
+--- a/src/utils/parseAtomFeed.js
++++ b/src/utils/parseAtomFeed.js
+@@ -13,7 +13,7 @@ import {
+   getEntryId
+ } from './normalizer.js'
+ 
+-const transform = (item, options) => {
++const transform = (item, options, hostname) => {
+   const {
+     useISODateFormat,
+     descriptionMaxLen,
+@@ -37,7 +37,7 @@ const transform = (item, options) => {
+   const entry = {
+     id: getEntryId(id, link, pubDate),
+     title: getText(title),
+-    link: getPureUrl(link, id),
++    link: getPureUrl(link, id, hostname),
+     published: useISODateFormat ? toISODateString(pubDate) : pubDate,
+     description: buildDescription(htmlContent || summary, descriptionMaxLen),
+   }
+@@ -50,7 +50,7 @@ const transform = (item, options) => {
+   }
+ }
+ 
+-const flatten = (feed) => {
++const flatten = (feed, hostname) => {
+   const {
+     id,
+     title = '',
+@@ -70,7 +70,7 @@ const flatten = (feed) => {
+     const item = {
+       ...entry,
+       title: getText(title),
+-      link: getPureUrl(link, id),
++      link: getPureUrl(link, id, hostname),
+     }
+     if (hasProperty(item, 'summary')) {
+       item.summary = getText(summary)
+@@ -84,20 +84,20 @@ const flatten = (feed) => {
+   const output = {
+     ...feed,
+     title: getText(title),
+-    link: getPureUrl(link, id),
++    link: getPureUrl(link, id, hostname),
+     entry: isArray(entry) ? items : items[0],
+   }
+   return output
+ }
+ 
+-const parseAtom = (data, options = {}) => {
++const parseAtom = (data, options = {}, hostname) => {
+   const {
+     normalization,
+     getExtraFeedFields,
+   } = options
+ 
+   if (!normalization) {
+-    return flatten(data.feed)
++    return flatten(data.feed, hostname)
+   }
+ 
+   const {
+@@ -119,18 +119,18 @@ const parseAtom = (data, options = {}) => {
+ 
+   return {
+     title: getText(title),
+-    link: getPureUrl(link, id),
++    link: getPureUrl(link, id, hostname),
+     description: subtitle,
+     language,
+     generator,
+     published,
+     ...extraFields,
+     entries: items.map((item) => {
+-      return transform(item, options)
++      return transform(item, options, hostname)
+     }),
+   }
+ }
+ 
+-export default (data, options = {}) => {
+-  return parseAtom(data, options)
++export default (data, options = {}, hostname) => {
++  return parseAtom(data, options, hostname)
+ }
+diff --git a/src/utils/parseJsonFeed.js b/src/utils/parseJsonFeed.js
+index 26b31ade4e243a28c3a82d93fc2900fe02c7c50e..9167075dc8cc3f3c1e5d0f38e888daa913a1a95d 100644
+--- a/src/utils/parseJsonFeed.js
++++ b/src/utils/parseJsonFeed.js
+@@ -7,12 +7,13 @@ import { isArray } from 'bellajs'
+ import {
+   toISODateString,
+   buildDescription,
+-  getEntryId
++  getEntryId,
++  getHref
+ } from './normalizer.js'
+ 
+ import { purify as purifyUrl } from './linker.js'
+ 
+-const transform = (item, options) => {
++const transform = (item, options, hostname) => {
+   const {
+     useISODateFormat,
+     descriptionMaxLen,
+@@ -35,7 +36,7 @@ const transform = (item, options) => {
+   const entry = {
+     id: getEntryId(id, link, pubDate),
+     title,
+-    link: purifyUrl(link),
++    link: purifyUrl(link) || getHref(link, hostname),
+     published,
+     description: buildDescription(textContent || htmlContent || summary, descriptionMaxLen),
+   }
+@@ -46,7 +47,7 @@ const transform = (item, options) => {
+   }
+ }
+ 
+-const parseJson = (data, options) => {
++const parseJson = (data, options, hostname) => {
+   const {
+     normalization,
+     getExtraFeedFields,
+@@ -70,18 +71,18 @@ const parseJson = (data, options) => {
+ 
+   return {
+     title,
+-    link: purifyUrl(homepageUrl),
++    link: purifyUrl(homepageUrl) || getHref(homepageUrl, hostname),
+     description,
+     language,
+     published: '',
+     generator: '',
+     ...extraFields,
+     entries: items.map((item) => {
+-      return transform(item, options)
++      return transform(item, options, hostname)
+     }),
+   }
+ }
+ 
+-export default (data, options = {}) => {
+-  return parseJson(data, options)
++export default (data, options = {}, hostname) => {
++  return parseJson(data, options, hostname)
+ }
+diff --git a/src/utils/parseRssFeed.js b/src/utils/parseRssFeed.js
+index 5274c87961a9e55be142fd0e85ea6b7811d47dcc..4c8af23c1b9c15a8b259118f058f6977b095362c 100644
+--- a/src/utils/parseRssFeed.js
++++ b/src/utils/parseRssFeed.js
+@@ -13,7 +13,7 @@ import {
+   getEntryId
+ } from './normalizer.js'
+ 
+-const transform = (item, options) => {
++const transform = (item, options, hostname) => {
+   const {
+     useISODateFormat,
+     descriptionMaxLen,
+@@ -33,7 +33,7 @@ const transform = (item, options) => {
+   const entry = {
+     id: getEntryId(guid, link, pubDate),
+     title: getText(title),
+-    link: getPureUrl(link, guid),
++    link: getPureUrl(link, guid, hostname),
+     published,
+     description: buildDescription(description, descriptionMaxLen),
+   }
+@@ -46,7 +46,7 @@ const transform = (item, options) => {
+   }
+ }
+ 
+-const flatten = (feed) => {
++const flatten = (feed, hostname) => {
+   const {
+     title = '',
+     link = '',
+@@ -64,7 +64,7 @@ const flatten = (feed) => {
+     const item = {
+       ...entry,
+       title: getText(title),
+-      link: getPureUrl(link, id),
++      link: getPureUrl(link, id, hostname),
+     }
+ 
+     const txtTags = 'guid description source'.split(' ')
+@@ -88,20 +88,20 @@ const flatten = (feed) => {
+   const output = {
+     ...feed,
+     title: getText(title),
+-    link: getPureUrl(link),
++    link: getPureUrl(link, hostname),
+     item: isArray(item) ? entries : entries[0],
+   }
+   return output
+ }
+ 
+-const parseRss = (data, options = {}) => {
++const parseRss = (data, options = {}, hostname) => {
+   const {
+     normalization,
+     getExtraFeedFields,
+   } = options
+ 
+   if (!normalization) {
+-    return flatten(data.rss.channel)
++    return flatten(data.rss.channel, hostname)
+   }
+ 
+   const {
+@@ -122,18 +122,18 @@ const parseRss = (data, options = {}) => {
+ 
+   return {
+     title: getText(title),
+-    link: getPureUrl(link),
++    link: getPureUrl(link, '', hostname),
+     description,
+     language,
+     generator,
+     published,
+     ...extraFields,
+     entries: items.map((item) => {
+-      return transform(item, options)
++      return transform(item, options, hostname)
+     }),
+   }
+ }
+ 
+-export default (data, options = {}) => {
+-  return parseRss(data, options)
++export default (data, options = {}, hostname) => {
++  return parseRss(data, options, hostname)
+ }
