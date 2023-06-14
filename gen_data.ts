@@ -66,8 +66,12 @@ const requests = rss_link.map(uri => limit(async () => {
     return
   }
 
+  const u = new URL(uri)
+  const baseUrl = `${u.protocol}//${u.hostname}`
+
   try {
     const rssData = await extract(uri, {
+      baseUrl,
       getExtraEntryFields(entryData: any) {
         const { pubDate, published, updated } = entryData
 

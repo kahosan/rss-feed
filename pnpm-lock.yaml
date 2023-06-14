@@ -1,18 +1,13 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-patchedDependencies:
-  '@extractus/feed-extractor@6.2.2':
-    hash: ufzj6xhpksyl3nbhhlbuy35zq4
-    path: patches/@extractus__feed-extractor@6.2.2.patch
-
 dependencies:
   '@extractus/feed-extractor':
-    specifier: ^6.2.2
-    version: 6.2.2(patch_hash=ufzj6xhpksyl3nbhhlbuy35zq4)
+    specifier: ^6.2.3
+    version: 6.2.3
   '@vueuse/core':
     specifier: ^10.1.2
     version: 10.1.2(vue@3.3.2)
@@ -501,18 +496,17 @@ packages:
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
 
-  /@extractus/feed-extractor@6.2.2(patch_hash=ufzj6xhpksyl3nbhhlbuy35zq4):
-    resolution: {integrity: sha512-aMQ25XMllrnVdWGwqCCadQ2rZhgrxusTO09MHqP8ATm86S3GT5Uq5XCYjOG4qVqQ238ZfqTaIxK4pUzo0PftwQ==}
+  /@extractus/feed-extractor@6.2.3:
+    resolution: {integrity: sha512-Nr3Gmi7oeuGS13u6BDT2YNUcniCfpvZfMvgoSdmuRrk5TyevBrxn3Tt+i6tU4GYQTqOxSF79CCENdYYK6k94mg==}
     engines: {node: '>= 14'}
     dependencies:
       bellajs: 11.1.2
       cross-fetch: 3.1.6
-      fast-xml-parser: 4.2.2
-      html-entities: 2.3.3
+      fast-xml-parser: 4.2.4
+      html-entities: 2.3.6
     transitivePeerDependencies:
       - encoding
     dev: false
-    patched: true
 
   /@fluffyfox/eslint-plugin@0.1.0(eslint@8.41.0):
     resolution: {integrity: sha512-akpFZb5VGXaja0zrndWNsp8pjxGVNvhmT34sk9MsXAVrVlv7LB4pqfSGJ684y6kR2FIDsT1cVcPIbGuD5W00Sg==}
@@ -3051,8 +3045,8 @@ packages:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
     dev: true
 
-  /fast-xml-parser@4.2.2:
-    resolution: {integrity: sha512-DLzIPtQqmvmdq3VUKR7T6omPK/VCRNqgFlGtbESfyhcH2R4I8EzK1/K6E8PkRCK2EabWrUHK32NjYRbEFnnz0Q==}
+  /fast-xml-parser@4.2.4:
+    resolution: {integrity: sha512-fbfMDvgBNIdDJLdLOwacjFAPYt67tr31H9ZhWSm45CDAxvd0I6WTlSOUo7K2P/K5sA5JgMKG64PI3DMcaFdWpQ==}
     hasBin: true
     dependencies:
       strnum: 1.0.5
@@ -3418,8 +3412,8 @@ packages:
       whatwg-encoding: 2.0.0
     dev: true
 
-  /html-entities@2.3.3:
-    resolution: {integrity: sha512-DV5Ln36z34NNTDgnz0EWGBLZENelNAtkiFA4kyNOG2tDI6Mz1uSWiq1wAKdyjnJwyDiDO7Fa2SO1CTxPXL8VxA==}
+  /html-entities@2.3.6:
+    resolution: {integrity: sha512-9o0+dcpIw2/HxkNuYKxSJUF/MMRZQECK4GnF+oQOmJ83yCVHTWgCH5aOXxK5bozNRmM8wtgryjHD3uloPBDEGw==}
     dev: false
 
   /htmlparser2@8.0.1:
