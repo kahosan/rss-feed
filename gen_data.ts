@@ -3,7 +3,7 @@ import { writeFile } from 'fs/promises'
 import type { FeedData, FeedEntry } from '@extractus/feed-extractor'
 import { extract } from '@extractus/feed-extractor'
 
-import ky from 'ky'
+import got from 'got'
 import plimit from 'p-limit'
 import { getDate, getMonth, getYear } from 'date-fns'
 
@@ -19,14 +19,14 @@ interface F extends Required<FeedData> {
 
 const limit = plimit(4)
 
-const headers = new Headers({
+const headers = {
   'User-Agent': 'YJSNPI-RSS-Reader/1.0',
   'Origin': 'https://www.google.com',
   'Referer': 'https://www.google.com/',
-})
+}
 
 async function detectRssLink(uri: string) {
-  const html = await ky.get(uri, { headers, timeout: 20 * 1000 }).text()
+  const html = await got.get(uri, { headers, timeout: { request: 20 * 1000 } }).text()
 
   const reg = /(?<=href=["/]"?).+?(?=["> ])/gm
 
@@ -70,6 +70,9 @@ const requests = rss_link.map(uri => limit(async () => {
   const baseUrl = `${u.protocol}//${u.hostname}`
 
   try {
+    const controller = new AbortController()
+    setTimeout(() => controller.abort(), 20 * 1000)
+
     const rssData = await extract(uri, {
       baseUrl,
       getExtraEntryFields(entryData: any) {
@@ -80,7 +83,8 @@ const requests = rss_link.map(uri => limit(async () => {
           content: entryData['content:encoded'],
         }
       },
-    }, { headers }) as F
+      // @ts-expect-error -- abort signal
+    }, { headers, signal: controller.signal }) as F
 
     // add to cache
     if (!cache.find(c => c === uri || rss_manual.includes(uri)))
