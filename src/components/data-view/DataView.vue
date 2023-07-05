@@ -19,7 +19,7 @@ const date = (monthDay: string, published: string | Date) => {
           {{ pangu.spacing(entry.postTitle) }}
         </a>
         <p max-w-140 truncate text-3.5 op-60>
-          {{ entry.description || '没有描述' }}
+          {{ pangu.spacing(entry.description) || '没有描述' }}
         </p>
       </div>
       <div ml-4 max-w-28 min-w-28 overflow-hidden text-4 text-secondary>
