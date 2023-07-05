@@ -33,7 +33,7 @@ const changeSource = (s: DataSource) => {
 }
 
 const target = shallowRef<HTMLDivElement | null>(null)
-const displayDataByYear = computed(() => lazyData(target, years.value, 0, 1, { threshold: 0.1 }).value)
+const displayDataByYear = lazyData(target, years, 0, 1, { threshold: 0.1 })
 </script>
 
 <template>

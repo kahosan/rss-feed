@@ -1,10 +1,15 @@
-export function lazyData<T>(target: Ref<HTMLDivElement | null>, data: T[], end: number, chunkSize: number, observerOptions: IntersectionObserverInit) {
+export function lazyData<T>(target: Ref<HTMLDivElement | null>, data: Ref<T[]>, end: number, chunkSize: number, observerOptions: IntersectionObserverInit) {
   // https://github.com/vuejs/core/issues/2136#issuecomment-908269949
-  const displayData = ref(data.slice(0, end)) as Ref<T[]>
+  const displayData = ref([]) as Ref<T[]>
+
+  const stopWatchData = watch(
+    data,
+    newData => displayData.value = newData.slice(0, end),
+  )
 
   const loadMore = () => {
     const currentLength = displayData.value.length
-    const newData = data.slice(currentLength, currentLength + chunkSize)
+    const newData = data.value.slice(currentLength, currentLength + chunkSize)
 
     requestAnimationFrame(() => displayData.value.push(...newData))
   }
@@ -34,6 +39,7 @@ export function lazyData<T>(target: Ref<HTMLDivElement | null>, data: T[], end: 
   onUnmounted(() => {
     cleanup()
     stopWatch()
+    stopWatchData()
   })
 
   return displayData
