@@ -4,7 +4,7 @@ import type { RssEntry } from '~/types/rss'
 
 const { monthDayData } = defineProps<{ monthDayData: RssEntry[] }>()
 
-const target = ref<HTMLDivElement | null>(null)
+const target = shallowRef<HTMLDivElement | null>(null)
 const displayData = lazyData(target, monthDayData, 10, 10, { threshold: 0.1, rootMargin: '0px 0px 100px 0px' })
 </script>
 

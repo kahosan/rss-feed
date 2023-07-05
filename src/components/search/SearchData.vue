@@ -14,7 +14,7 @@ const fuseOptions = ref<FuseOptions>({
   includeScore: true,
 })
 
-const target = ref<HTMLDivElement | null>(null)
+const target = shallowRef<HTMLDivElement | null>(null)
 const result = ref<RssEntry[]>([])
 
 // 当 result 变化时，重新调用一次 lazyData，同时返回 lazyData 中响应式 切片数据
