@@ -70,9 +70,6 @@ const requests = rss_link.map(uri => limit(async () => {
   const baseUrl = `${u.protocol}//${u.hostname}`
 
   try {
-    const controller = new AbortController()
-    setTimeout(() => controller.abort(), 20 * 1000)
-
     const rssData = await extract(uri, {
       baseUrl,
       getExtraEntryFields(entryData: any) {
@@ -83,8 +80,7 @@ const requests = rss_link.map(uri => limit(async () => {
           content: entryData['content:encoded'],
         }
       },
-      // @ts-expect-error -- abort signal
-    }, { headers, signal: controller.signal }) as F
+    }, { headers, signal: AbortSignal.timeout(20 * 1000) }) as F
 
     // add to cache
     if (!cache.find(c => c === uri || rss_manual.includes(uri)))

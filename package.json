@@ -17,7 +17,7 @@
     "postinstall": "npx simple-git-hooks"
   },
   "dependencies": {
-    "@extractus/feed-extractor": "^6.2.3",
+    "@extractus/feed-extractor": "^6.3.0",
     "@vueuse/core": "^10.2.1",
     "date-fns": "^2.30.0",
     "esno": "^0.16.3",
