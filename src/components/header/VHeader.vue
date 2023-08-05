@@ -18,7 +18,7 @@ const options = tocYears.map(year => ({
 </script>
 
 <template>
-  <div bg="#ebebeb" dark:bg="#272626" h-14 flex items-center p-4>
+  <div bg="#ebebeb" dark:bg="#272626" fixed z-1 h-14 w-full flex items-center p-4 transition-all>
     <div mx-auto max-w-6xl flex="~ 1 justify-between items-center">
       <NDropdown size="large" trigger="click" :options="options" @select="changeYear">
         <h2 cursor-pointer text-5>

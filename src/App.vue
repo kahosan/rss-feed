@@ -34,12 +34,34 @@ const changeSource = (s: DataSource) => {
 
 const target = shallowRef<HTMLDivElement | null>(null)
 const displayDataByYear = lazyData(target, years, 0, 1, { threshold: 0.1 })
+
+const isHeaderVisible = ref(true)
+const lastScrollPosition = ref(0)
+
+const handleScroll = () => {
+  const currentScrollPosition = document.documentElement.scrollTop
+
+  if (currentScrollPosition > lastScrollPosition.value)
+    isHeaderVisible.value = false
+  else
+    isHeaderVisible.value = true
+
+  lastScrollPosition.value = currentScrollPosition
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
 </script>
 
 <template>
   <NConfigProvider :theme="isDark ? darkTheme : null">
-    <VHeader :change-source="changeSource" :active="active" :toc-years="tocYears" :change-year="changeYear" />
-    <main p-4>
+    <VHeader :class="isHeaderVisible ? 'top-0' : 'top--14'" :change-source="changeSource" :active="active" :toc-years="tocYears" :change-year="changeYear" />
+    <main mt-14 p-4>
       <div v-if="rssData.contents" relative mx-auto max-w-6xl>
         <div v-if="source === 'default'">
           <div v-for="year in displayDataByYear" :key="year">
@@ -63,3 +85,6 @@ const displayDataByYear = lazyData(target, years, 0, 1, { threshold: 0.1 })
     </main>
   </NConfigProvider>
 </template>
+
+<style>
+</style>
