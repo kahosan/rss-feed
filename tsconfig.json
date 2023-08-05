@@ -15,8 +15,9 @@
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "paths": {
-      "~/*": ["src/*", "gen_data.ts"]
+      "~/*": ["src/*"]
     }
   },
+  "include": ["components.d.ts", "auto-imports.d.ts", "src/**/*", "gen_data.ts", "uno.config.ts", "vite.config.ts"],
   "exclude": ["dist", "node_modules"]
 }
