@@ -41,7 +41,7 @@ watch(
         min="0"
         size="small"
         placeholder="0 - 1"
-        @change="e => options.threshold = e ?? 0.6"
+        :on-update:value="e => options.threshold = e ?? 0.6"
         @keyup.enter="onEnter"
       />
     </div>
