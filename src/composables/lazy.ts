@@ -1,4 +1,4 @@
-export function lazyData<T>(target: Ref<HTMLDivElement | null>, data: Ref<T[]>, end: number, chunkSize: number, observerOptions: IntersectionObserverInit) {
+export function lazyData<T>(target: Ref<HTMLDivElement | null>, data: Ref<T[]>, end: number, chunkSize: number, observerOptions?: IntersectionObserverInit) {
   // https://github.com/vuejs/core/issues/2136#issuecomment-908269949
   const displayData = ref([]) as Ref<T[]>
 
