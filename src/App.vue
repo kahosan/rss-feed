@@ -82,7 +82,7 @@ onUnmounted(() => {
           <UnknownURI :data="rssData.unknownURI" />
         </div>
       </div>
-      <div v-else>
+      <div v-else mx-auto max-w-6xl>
         数据加载中...
       </div>
     </main>
