@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "vite --port 3000 --host",
     "build": "esno gen_data.ts && vite build",
+    "build:web": "vite build",
     "lint": "eslint .",
     "typecheck": "vue-tsc --noEmit",
     "preview": "vite preview",

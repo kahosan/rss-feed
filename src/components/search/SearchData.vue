@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { NInput } from 'naive-ui'
 import Fuse from 'fuse.js'
-import rss_data from '~/assets/rss_data.json'
 import type { RssContents, RssEntry } from '~/types/rss'
 import type { FuseOptions } from '~/types/fuse'
 
-const contents = rss_data.contents as RssContents[]
+const props = defineProps<{ contents: RssContents[] }>()
 
 const searchQuery = ref('')
 
@@ -26,7 +25,7 @@ const handleSearch = () => {
     result.value = []
 
   timeId = window.setTimeout(() => {
-    const fuse = new Fuse(contents.map(item => item.entries).flat(), fuseOptions.value)
+    const fuse = new Fuse(props.contents.map(item => item.entries).flat(), fuseOptions.value)
     result.value = fuse.search(searchQuery.value).map(item => item.item)
   }, 100)
 }

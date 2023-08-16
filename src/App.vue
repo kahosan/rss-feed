@@ -3,21 +3,19 @@ import { NConfigProvider, darkTheme } from 'naive-ui'
 import type { DataSource } from './types/source'
 import type { RssData } from '~/types/rss'
 
-import rss_data from '~/assets/rss_data.json'
+const rssData = ref<RssData | null>(null)
 
-const rssData = rss_data as unknown as RssData ?? {}
+const years = ref<number[]>([])
+const tocYears = ref<number[]>([])
 
-const years = ref([...new Set(rss_data.contents.map(content => content.year))])
-
-const tocYears = toValue(years)
 const changeYear = (year: number) => {
-  years.value = tocYears.filter(y => y <= year)
+  years.value = tocYears.value.filter(y => y <= year)
 }
 
 const yearData = (year: number) => {
   const contents = []
 
-  for (const content of rssData.contents) {
+  for (const content of rssData.value?.contents ?? []) {
     if (content.year === year)
       contents.push(content)
   }
@@ -51,6 +49,11 @@ const handleScroll = () => {
 
 onMounted(() => {
   window.addEventListener('scroll', handleScroll)
+  import('~/assets/rss_data.json').then((data) => {
+    rssData.value = data
+    years.value = [...new Set(data.contents.map(content => content.year))]
+    tocYears.value = toValue(years)
+  })
 })
 
 onUnmounted(() => {
@@ -62,7 +65,7 @@ onUnmounted(() => {
   <NConfigProvider :theme="isDark ? darkTheme : null">
     <VHeader :class="isHeaderVisible ? 'top-0' : 'top--14'" :change-source="changeSource" :active="active" :toc-years="tocYears" :change-year="changeYear" />
     <main mt-14 p-4>
-      <div v-if="rssData.contents" relative mx-auto max-w-6xl>
+      <div v-if="rssData?.contents" relative mx-auto max-w-6xl>
         <div v-if="source === 'default'">
           <div v-for="year in displayDataByYear" :key="year">
             <Years :year="year" :year-data="yearData(year)" />
@@ -70,7 +73,7 @@ onUnmounted(() => {
           <div ref="target" />
         </div>
         <div v-else-if="source === 'search'">
-          <SearchData />
+          <SearchData :contents="rssData.contents" />
         </div>
         <div v-else-if="source === 'unknownDate'">
           <UnknownDate :data="rssData.unknownDate" />
@@ -80,7 +83,7 @@ onUnmounted(() => {
         </div>
       </div>
       <div v-else>
-        没有数据
+        数据加载中...
       </div>
     </main>
   </NConfigProvider>

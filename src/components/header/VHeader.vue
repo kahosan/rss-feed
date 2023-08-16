@@ -2,19 +2,19 @@
 import { NDropdown } from 'naive-ui'
 import type { DataSource } from '~/types/source'
 
-const { active, tocYears } = defineProps<{
+const props = defineProps<{
   changeSource: (s: DataSource) => void
   active: (s: DataSource) => boolean
   tocYears: number[]
   changeYear: (year: number) => void
 }>()
 
-const isActive = (s: DataSource) => active(s) && 'op-60'
+const isActive = (s: DataSource) => props.active(s) && 'op-60'
 
-const options = tocYears.map(year => ({
+const options = computed(() => props.tocYears.map(year => ({
   label: year.toString(),
   key: year,
-}))
+})))
 </script>
 
 <template>
