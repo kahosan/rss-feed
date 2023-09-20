@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NCascader, NCheckbox, NCheckboxGroup, NModal, NSelect, NSpace } from 'naive-ui'
+import { NCascader, NCheckbox, NCheckboxGroup, NModal, NSelect, NSpace, useMessage } from 'naive-ui'
 import { storeToRefs } from 'pinia'
 import { useRssData } from '~/store/rss-data'
 import { useRssGroup } from '~/store/rss-group'
@@ -8,6 +8,8 @@ const { toggleModal } = defineProps<{
   isOpen: boolean
   toggleModal: () => void
 }>()
+
+const message = useMessage()
 
 const { rssGroup } = storeToRefs(useRssGroup())
 const { addGroupItem, removeGroup, removeGroupItem } = useRssGroup()
@@ -49,15 +51,20 @@ const groupList = computed(() => rssGroup.value?.map(group => group.name))
 
 const clean = () => {
   selectRssGroupForRemove.value = []
+  selectRssGroupForAdd.value = []
+  groupSelect.value = []
 }
 
 const submit = () => {
-  if (selectRssGroupForRemove.value.length !== 0) {
-    selectRssGroupForRemove.value.forEach(itemTitle => removeGroupItem(itemTitle))
-    selectRssGroupForRemove.value.forEach(group => removeGroup(group))
+  if (selectRssGroupForRemove.value.length === 0 && selectRssGroupForAdd.value.length === 0 && groupSelect.value.length === 0) {
+    message.warning('选项不能为空')
+    return
   }
 
-  if (selectRssGroupForAdd.value.length !== 0) {
+  selectRssGroupForRemove.value.forEach(itemTitle => removeGroupItem(itemTitle))
+  selectRssGroupForRemove.value.forEach(group => removeGroup(group))
+
+  if (selectRssGroupForAdd.value.length !== 0 && groupSelect.value.length !== 0) {
     const groupItems = selectRssGroupForAdd.value.map(value => ({
       title: value,
       link: siteList.value.find(item => item.siteTitle === value)?.siteLink ?? '',
@@ -80,7 +87,7 @@ const cancel = () => {
 <template>
   <NModal
     :show="isOpen"
-    :on-close="toggleModal"
+    :on-close="cancel"
     transform-origin="center"
     preset="dialog"
     mt-30
