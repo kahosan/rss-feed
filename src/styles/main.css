@@ -6,6 +6,7 @@
 
 :root {
   --c-bg: #fff;
+  --c-side-bar-bg: #fafafa;
   --c-h1-color: #00000028;
   --text-sec-color: #5c5c5c;
 }
@@ -23,6 +24,7 @@ html {
 
 html.dark {
   --c-bg: #1d1c1c;
+  --c-side-bar-bg: #272626;
   --c-h1-color: #d1d1d121;
   --text-sec-color: #a8a8a8;
   --input-color-focus: #272626 !important;
@@ -39,4 +41,8 @@ h1 {
 
 .n-input {
   background-color: var(--input-color-focus) !important;
+}
+
+button, [type='button'], [type='reset'], [type='submit'] {
+  background-color: unset;
 }

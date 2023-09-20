@@ -21,4 +21,16 @@ export interface RssEntry {
   published: Date | string
   description: string
   monthDay: string
+  groupBy?: string
+}
+
+export interface RssGroup {
+  name: string
+  items: RssGroupItem[]
+}
+
+export interface RssGroupItem {
+  title: string
+  link: string
+  description: string
 }

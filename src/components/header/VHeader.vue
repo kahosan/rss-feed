@@ -1,30 +1,31 @@
 <script lang="ts" setup>
-import { NDropdown } from 'naive-ui'
+import { NButton } from 'naive-ui'
 import type { DataSource } from '~/types/source'
 
 const props = defineProps<{
   changeSource: (s: DataSource) => void
   active: (s: DataSource) => boolean
-  tocYears: number[]
-  changeYear: (year: number) => void
+  isSideBarVisible: boolean
+  toggleSideBarVisible: () => void
 }>()
 
 const isActive = (s: DataSource) => props.active(s) && 'op-60'
 
-const options = computed(() => props.tocYears.map(year => ({
-  label: year.toString(),
-  key: year,
-})))
+// const options = computed(() => props.tocYears.map(year => ({
+//   label: year.toString(),
+//   key: year,
+// })))
 </script>
 
 <template>
-  <div bg="#ebebeb" dark:bg="#272626" fixed z-1 h-14 w-full flex items-center p-4 transition-all>
-    <div mx-auto max-w-6xl flex="~ 1 justify-between items-center">
-      <NDropdown size="large" trigger="click" :options="options" @select="changeYear">
-        <h2 cursor-pointer text-5>
-          RSS Feed
-        </h2>
-      </NDropdown>
+  <div class="w-full md:w-[calc(100%-20rem)]" bg="#f6f6f6" dark:bg="#272626" fixed z-3 h-14 flex items-center p-4 md:ml-80>
+    <div mx-auto flex="~ 1 justify-between items-center">
+      <h2 text-5 class="lt-md:hidden!">
+        RSS Feed
+      </h2>
+      <NButton class="md:hidden!" @click="toggleSideBarVisible">
+        <div class="i-carbon:list text-4" />
+      </NButton>
       <div flex="~ items-center">
         <div text-3.5 children:pr-4 children:transition>
           <button :class="isActive('search')" @click="() => changeSource('search')">
