@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { useRssData } from './rss-data'
 import type { RssGroup, RssGroupItem } from '~/types/rss'
 
 export const useRssGroup = defineStore('rssGroup', () => {
@@ -7,34 +6,28 @@ export const useRssGroup = defineStore('rssGroup', () => {
   const localGroup = localStorage.getItem('RSS_GROUP')
   rssGroup.value = localGroup ? JSON.parse(localGroup) : undefined
 
-  const rss = useRssData()
-
-  const currentGroup = ref('default')
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  const currentGroup = ref<'default' | (string & {})>('default')
   const setCurrentGroup = (group: string) => currentGroup.value = group
 
   const addGroupItem = (name: string, items: RssGroupItem[]) => {
-    items.forEach((item) => {
-      rss.rssData?.contents.forEach((content) => {
-        const entry = content.entries.find(entry => entry.siteTitle === item.title)
-        if (entry)
-          entry.groupBy = name
-      })
-    })
-
     if (!rssGroup.value) {
-      rssGroup.value = [
-        {
-          name,
-          items,
-        },
-      ]
+      rssGroup.value = [{
+        name,
+        items,
+      }]
       localStorage.setItem('RSS_GROUP', JSON.stringify(rssGroup.value))
       return
     }
 
-    const group = rssGroup.value.find(group => group.name === name)
-    if (group) {
-      group.items = [...new Set([...group.items, ...items])]
+    const targetGroup = rssGroup.value.find(group => group.name === name)
+    if (targetGroup) {
+      rssGroup.value = rssGroup.value.map((group) => {
+        return {
+          ...group,
+          items: group.name === name ? [...group.items, ...items] : group.items,
+        }
+      })
     }
     else {
       rssGroup.value.push({
@@ -42,37 +35,22 @@ export const useRssGroup = defineStore('rssGroup', () => {
         items,
       })
     }
+
     localStorage.setItem('RSS_GROUP', JSON.stringify(rssGroup.value))
   }
 
   const removeGroupItem = (itemTitle: string) => {
-    rss.rssData?.contents.forEach((content) => {
-      const entry = content.entries.find(entry => entry.siteTitle === itemTitle)
-      if (entry)
-        entry.groupBy = undefined
-    })
-
     if (!rssGroup.value)
       return
 
-    const group = rssGroup.value.find(group => group.items.find(item => item.title === itemTitle))
-    if (!group) {
-      console.error(`can't find group for item ${itemTitle}`)
-      return
-    }
-
-    group.items = group.items.filter(item => item.title !== itemTitle)
+    rssGroup.value = rssGroup.value.map(group => ({
+      ...group,
+      items: group.items.filter(item => item.title !== itemTitle),
+    }))
     localStorage.setItem('RSS_GROUP', JSON.stringify(rssGroup.value))
   }
 
   const removeGroup = (group: string) => {
-    rss.rssData?.contents.forEach((content) => {
-      content.entries.forEach((entry) => {
-        if (entry.groupBy === group)
-          entry.groupBy = undefined
-      })
-    })
-
     if (!rssGroup.value)
       return
 

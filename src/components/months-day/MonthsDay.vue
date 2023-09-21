@@ -2,10 +2,11 @@
 import { lazyData } from '~/composables/lazy'
 import type { RssEntry } from '~/types/rss'
 
-const { monthDayData } = defineProps<{ monthDayData: RssEntry[] }>()
+const props = defineProps<{ monthDayData: RssEntry[] }>()
+const { monthDayData } = toRefs(props)
 
 const target = shallowRef<HTMLDivElement | null>(null)
-const displayData = lazyData(target, ref(monthDayData), 10, 10)
+const displayData = lazyData(target, monthDayData, 10, 10)
 </script>
 
 <template>

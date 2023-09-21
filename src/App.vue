@@ -5,7 +5,6 @@ import { storeToRefs } from 'pinia'
 import type { DataSource } from './types/source'
 
 import { useRssGroup } from './store/rss-group'
-import type { RssEntry } from './types/rss'
 import { useRssData } from '~/store/rss-data'
 
 const { rssData } = storeToRefs(useRssData())
@@ -42,23 +41,19 @@ function changeSource(s: DataSource) {
   source.value = s
 }
 
-const defaultTarget = shallowRef<HTMLDivElement | null>(null)
-const displayDataByYear = lazyData(defaultTarget, years, 0, 1, { threshold: 0.1 })
+const target = shallowRef<HTMLDivElement | null>(null)
+const displayDataByYear = lazyData(target, years, 0, 1, { threshold: 0.1 })
 
 const isSideBarVisible = ref(false)
 function toggleSideBarVisible() {
   isSideBarVisible.value = !isSideBarVisible.value
 }
 
-const rssGroupData = ref<RssEntry[]>([])
-const groupTarget = shallowRef<HTMLDivElement | null>(null)
-
-watchEffect(() => {
-  if (rssData.value)
-    rssGroupData.value = rssDataByGroup(currentGroup.value, rssData.value)
-})
-
-const displayDataByGroup = lazyData(groupTarget, rssGroupData, 20, 10, { threshold: 0.1, rootMargin: '0px 0px 100px 0px' })
+const rssGroupData = computed(() => rssDataByGroup(currentGroup.value, rssData.value))
+watch(
+  currentGroup,
+  () => scrollTo(0, 0),
+)
 </script>
 
 <template>
@@ -73,11 +68,10 @@ const displayDataByGroup = lazyData(groupTarget, rssGroupData, 20, 10, { thresho
               <div v-for="year in displayDataByYear" :key="year">
                 <Years :year="year" :year-data="yearData(year)" />
               </div>
-              <div ref="defaultTarget" />
+              <div ref="target" />
             </div>
             <div v-show="currentGroup !== 'default'">
-              <DataView date-type="year" :display-data="displayDataByGroup" />
-              <div ref="groupTarget" />
+              <DataView date-type="year" :display-data="rssGroupData" />
             </div>
           </div>
           <div v-else-if="source === 'search'">
