@@ -29,7 +29,7 @@ const siteList = computed(() =>
 
 const siteTitleList = () => [...new Set(siteList.value.filter(item => !item.groupBy).map(item => item.siteTitle))]
 
-const selectOptions = () => {
+function selectOptions() {
   return siteTitleList().map(item => ({
     label: item,
     value: item,
@@ -38,12 +38,12 @@ const selectOptions = () => {
 
 const selectedValues = ref<string[]>([])
 
-const clean = () => {
+function clean() {
   groupName.value = ''
   selectedValues.value = []
 }
 
-const submit = () => {
+function submit() {
   if (rssGroup.value?.find(group => group.name === groupName.value)) {
     message.error('分组已存在')
     return
@@ -60,7 +60,7 @@ const submit = () => {
   clean()
 }
 
-const cancel = () => {
+function cancel() {
   toggleModal()
   clean()
 }
@@ -87,8 +87,8 @@ const cancel = () => {
         v-model:value="selectedValues"
         :options="selectOptions()"
         placeholder="选择站点"
-        filterable
-        multiple
+
+        filterable multiple
       />
     </NSpace>
   </NModal>

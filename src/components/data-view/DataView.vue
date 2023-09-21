@@ -5,7 +5,7 @@ import type { RssEntry } from '~/types/rss'
 
 const { dateType } = defineProps<{ dateType: 'year' | 'monthDay'; displayData: RssEntry[] }>()
 
-const date = (monthDay: string, published: string | Date) => {
+function date(monthDay: string, published: string | Date) {
   const year = getYear(new Date(published))
   return dateType === 'year' ? `${year}-${monthDay}` : monthDay
 }
@@ -21,7 +21,7 @@ const date = (monthDay: string, published: string | Date) => {
         <p max-w-140 truncate text-3.5 op-60>
           {{ pangu.spacing(entry.description) || '没有描述' }}
         </p>
-      </div>
+              </div>
       <div ml-4 max-w-28 min-w-28 overflow-hidden text-4 text-secondary>
         <p>{{ date(entry.monthDay, entry.published) }}</p>
         <a target="_blank" block cursor-pointer truncate transition hover:op-60 :href="entry.siteLink">

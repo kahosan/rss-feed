@@ -5,7 +5,7 @@ const { yearData } = defineProps<{ year: number; yearData: RssData['contents'] }
 
 const months = yearData.map(content => content.month)
 
-const getMonthData = (month: number) => {
+function getMonthData(month: number) {
   const entries = []
 
   for (const content of yearData) {

@@ -20,7 +20,7 @@ const result = ref<RssEntry[]>([])
 const displayData = lazyData(target, result, 20, 10, { threshold: 0.1, rootMargin: '0px 0px 100px 0px' })
 
 let timeId: number
-const handleSearch = () => {
+function handleSearch() {
   if (displayData.value)
     result.value = []
 

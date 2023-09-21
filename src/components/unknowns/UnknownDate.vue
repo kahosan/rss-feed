@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { UnknownDate } from '~/types/rss'
+
 defineProps<{ data: UnknownDate }>()
 </script>
 

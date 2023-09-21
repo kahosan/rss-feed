@@ -24,7 +24,7 @@ watchEffect(() => {
 //   years.value = tocYears.value.filter(y => y <= year)
 // }
 
-const yearData = (year: number) => {
+function yearData(year: number) {
   const contents = []
 
   for (const content of rssData.value?.contents ?? []) {
@@ -38,7 +38,7 @@ const yearData = (year: number) => {
 const source = ref<DataSource>('default')
 const active = (s: DataSource) => source.value === s
 
-const changeSource = (s: DataSource) => {
+function changeSource(s: DataSource) {
   source.value = s
 }
 
@@ -46,7 +46,7 @@ const defaultTarget = shallowRef<HTMLDivElement | null>(null)
 const displayDataByYear = lazyData(defaultTarget, years, 0, 1, { threshold: 0.1 })
 
 const isSideBarVisible = ref(false)
-const toggleSideBarVisible = () => {
+function toggleSideBarVisible() {
   isSideBarVisible.value = !isSideBarVisible.value
 }
 

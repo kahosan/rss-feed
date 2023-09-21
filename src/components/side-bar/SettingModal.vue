@@ -38,7 +38,7 @@ const siteList = computed(() =>
 
 const siteTitleList = () => [...new Set(siteList.value.filter(item => !item.groupBy).map(item => item.siteTitle))]
 
-const groupItems = () => {
+function groupItems() {
   return siteTitleList().map(item => ({
     label: item,
     value: item,
@@ -49,13 +49,13 @@ const selectRssGroupForAdd = ref<string[]>([])
 const groupSelect = ref<string[]>([])
 const groupList = computed(() => rssGroup.value?.map(group => group.name))
 
-const clean = () => {
+function clean() {
   selectRssGroupForRemove.value = []
   selectRssGroupForAdd.value = []
   groupSelect.value = []
 }
 
-const submit = () => {
+function submit() {
   if (selectRssGroupForRemove.value.length === 0 && selectRssGroupForAdd.value.length === 0 && groupSelect.value.length === 0) {
     message.warning('选项不能为空')
     return
@@ -78,7 +78,7 @@ const submit = () => {
   clean()
 }
 
-const cancel = () => {
+function cancel() {
   toggleModal()
   clean()
 }

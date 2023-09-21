@@ -40,7 +40,7 @@ const menuOptions = computed(() => [
   })) ?? [],
 ])
 
-const handleExpendKey = (key: string[]) => {
+function handleExpendKey(key: string[]) {
   setCurrentGroup(key[0] || 'default')
 }
 </script>
