@@ -2,7 +2,7 @@ export function lazyData<T>(target: Ref<HTMLDivElement | null>, data: Ref<T[]>, 
   // https://github.com/vuejs/core/issues/2136#issuecomment-908269949
   const displayData = ref([]) as Ref<T[]>
 
-  const stopWatchData = watch(
+  watch(
     data,
     newData => displayData.value = newData.slice(0, end),
   )
@@ -21,26 +21,14 @@ export function lazyData<T>(target: Ref<HTMLDivElement | null>, data: Ref<T[]>, 
     })
   }
 
-  let cleanup: () => void
-
-  const stopWatch = watch(
+  watch(
     target,
     (target) => {
       const observer = new IntersectionObserver(intersectionCallback, observerOptions)
       target && observer.observe(target)
-
-      cleanup = () => {
-        observer.disconnect()
-      }
     },
     { immediate: true, flush: 'post' },
   )
-
-  onUnmounted(() => {
-    cleanup()
-    stopWatch()
-    stopWatchData()
-  })
 
   return displayData
 }

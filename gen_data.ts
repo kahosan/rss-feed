@@ -5,13 +5,13 @@ import { extract } from '@extractus/feed-extractor'
 
 import got from 'got'
 import plimit from 'p-limit'
-import { getDate, getMonth, getYear } from 'date-fns'
 
 import cache from 'cache.json'
-import rss from 'rss.json'
-import rss_manual from 'rss_manual.json'
 
-import type { RssData } from '~/types/rss'
+import feed_list from 'feed_list.json'
+import feed_manual from 'feed_manual.json'
+
+import type { RssData } from '~/types/feeds'
 
 interface F extends Required<FeedData> {
   entries: (Required<FeedEntry> & { content: string })[]
@@ -25,53 +25,53 @@ const headers = {
   'Referer': 'https://www.google.com/',
 }
 
-async function detectRssLink(uri: string) {
+async function detect_feed_link(uri: string) {
   const html = await got.get(uri, { headers, timeout: { request: 20 * 1000 } }).text()
 
   const reg = /(?<=href=["/]"?).+?(?=["> ])/gm
 
   const sp = ['atom', 'feed', 'rss']
 
-  const rssLink = html.match(reg)?.find(link => sp.some(sp => link.includes(sp)))
+  const feed_link = html.match(reg)?.find(link => sp.some(sp => link.includes(sp)))
 
-  if (rssLink)
-    return new URL(rssLink, uri).href
+  if (feed_link)
+    return new URL(feed_link, uri).href
 }
 
-const r = rss.map(uri => limit(async () => {
-  const cacheLink = cache.find(c => uri.includes(new URL(c).hostname))
-  if (cacheLink)
-    return cacheLink
+const feed = feed_list.map(feed_url => limit(async () => {
+  const cache_link = cache.find(c => feed_url.includes(new URL(c).hostname))
+  if (cache_link)
+    return cache_link
 
   try {
-    const link = await detectRssLink(uri)
-    if (!link)
-      return `[ERROR-MESSAGE] | detect rss link not found | ${uri}`
+    const feed_link = await detect_feed_link(feed_url)
+    if (!feed_link)
+      return `[ERROR-MESSAGE] | detect feed link not found | ${feed_url}`
 
-    return link
+    return feed_link
   }
   catch (e: any) {
-    return `[ERROR-MESSAGE] | ${e.message} | ${uri}`
+    return `[ERROR-MESSAGE] | ${e.message} | ${feed_url}`
   }
 }))
 
-const rss_link = [...new Set([...rss_manual, ...await Promise.all(r)])]
+const feed_collect = [...new Set([...feed_manual, ...await Promise.all(feed)])]
 
-const cacheTemp: string[] = []
-const result: RssData = { unknownURI: [], unknownDate: [], contents: [] }
+const cache_temp: string[] = []
+const rss_data: RssData = { unknownURL: [], unknownDate: [], contents: [], collects: [] }
 
-const requests = rss_link.map(uri => limit(async () => {
-  if (uri.startsWith('[ERROR-MESSAGE]')) {
-    result.unknownURI.push(uri)
+const requests = feed_collect.map(feed_url => limit(async () => {
+  if (feed_url.startsWith('[ERROR-MESSAGE]')) {
+    rss_data.unknownURL.push(feed_url)
     return
   }
 
-  const u = new URL(uri)
-  const baseUrl = `${u.protocol}//${u.hostname}`
+  const u = new URL(feed_url)
+  const base_url = `${u.protocol}//${u.hostname}`
 
   try {
-    const rssData = await extract(uri, {
-      baseUrl,
+    const feed_data = await extract(feed_url, {
+      baseUrl: base_url,
       getExtraEntryFields(entryData: any) {
         const { pubDate, published, updated } = entryData
 
@@ -83,68 +83,45 @@ const requests = rss_link.map(uri => limit(async () => {
     }, { headers, signal: AbortSignal.timeout(20 * 1000) }) as F
 
     // add to cache
-    if (!cache.find(c => c === uri || rss_manual.includes(uri)))
-      cacheTemp.push(uri)
+    if (!cache.find(c => c === feed_url || feed_manual.includes(feed_url)))
+      cache_temp.push(feed_url)
 
-    const siteTitle = rssData.title
-    const siteLink = rssData.link
+    rss_data.collects.push({
+      title: feed_data.title,
+      link: feed_data.link,
+    })
 
-    rssData.entries.forEach((entry) => {
-      const date = new Date(entry.published ?? '')
-      const year = getYear(date)
-      const month = getMonth(date) + 1
-      const dateDay = getDate(date)
-
-      const id = entry.id
-      const postTitle = entry.title
-      const postLink = entry.link
-      const published = entry.published
+    for (const entry of feed_data.entries) {
       const description = entry.description ?? entry.content
 
-      const contentEntry = {
-        id,
-        siteTitle,
-        siteLink,
-        postTitle,
-        postLink,
-        description,
+      const feed_item = {
+        id: entry.id,
+        feedTitle: feed_data.title,
+        feedLink: feed_data.link,
+        postTitle: entry.title,
+        postLink: entry.link,
+        postDescription: description,
       }
 
-      if (!year || !month) {
-        result.unknownDate.push(contentEntry)
-        return
+      if (!entry.published) {
+        rss_data.unknownDate.push(feed_item)
+        continue
       }
 
-      const content = result.contents.find(c => c.year === year && c.month === month)
-      const monthDay = `${month > 9 ? month : `0${month}`}-${dateDay > 9 ? dateDay : `0${dateDay}`}`
-
-      const contentEntryWithDate = {
-        ...contentEntry,
-        published,
-        monthDay,
-      }
-
-      if (!content) {
-        result.contents.push({
-          year,
-          month,
-          entries: [contentEntryWithDate],
-        })
-      }
-      else {
-        content.entries.push(contentEntryWithDate)
-      }
-    })
+      rss_data.contents.push({
+        ...feed_item,
+        postPublished: entry.published,
+      })
+    }
   }
   catch (e: any) {
-    result.unknownURI.push(`[ERROR-MESSAGE] | ${e.message} | ${uri}`)
+    rss_data.unknownURL.push(`[ERROR-MESSAGE] | ${e.message} | ${feed_url}`)
   }
 }))
 
 await Promise.all(requests)
 
-result.contents.sort((a, b) => b.year - a.year || b.month - a.month)
-result.contents.forEach(c => c.entries.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime()))
+rss_data.contents.sort((a, b) => new Date(b.postPublished).getTime() - new Date(a.postPublished).getTime())
 
-await writeFile(new URL('src/assets/rss_data.json', import.meta.url), JSON.stringify(result, null, 2))
-await writeFile(new URL('cache.json', import.meta.url), JSON.stringify([...cache, ...cacheTemp], null, 2))
+await writeFile(new URL('src/assets/rss_data.json', import.meta.url), JSON.stringify(rss_data, null, 2))
+await writeFile(new URL('cache.json', import.meta.url), JSON.stringify([...cache, ...cache_temp], null, 2))

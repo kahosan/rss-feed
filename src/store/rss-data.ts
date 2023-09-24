@@ -1,49 +1,83 @@
-import { defineStore, storeToRefs } from 'pinia'
-import { useRssGroup } from './rss-group'
-import type { RssData, RssEntry } from '~/types/rss'
+import { defineStore } from 'pinia'
+import { useFeedGroup } from './feed-group'
 
-export const useRssData = defineStore('rssData', () => {
-  const rssData = ref<RssData | undefined>()
+import type { Feed, FeedCollect, RssData } from '~/types/feeds'
 
-  const { rssGroup } = storeToRefs(useRssGroup())
+export const useRssData = defineStore('rss-data', () => {
+  const data = ref<RssData | undefined>()
+  const contents = ref<Feed[]>([])
+  const collects = ref<FeedCollect[]>([])
+
+  const feedGroup = useFeedGroup()
 
   import ('~/assets/rss_data.json')
-    .then((data) => {
-      rssData.value = data
+    .then((value) => {
+      data.value = value
+      contents.value = value.contents
+      collects.value = value.collects
     })
 
   watchEffect(() => {
-    if (!rssGroup.value || !rssData.value)
-      return
+    contents.value = contents.value.map((feed) => {
+      const item = feedGroup.groups
+        .find(group => group.items
+          .find(item => item.title === feed.feedTitle))
 
-    for (const content of rssData.value.contents) {
-      for (const entry of content.entries) {
-        const targetGroup = rssGroup.value.find(group => group.items.find(item => item.title === entry.siteTitle))
-        entry.groupBy = targetGroup?.name
+      if (item) {
+        feed.groupBy = item.name
+        feed.hidden = item.items.at(0)?.hidden
       }
-    }
+      else {
+        feed.groupBy = undefined
+        feed.hidden = undefined
+      }
+
+      return feed
+    })
   })
 
-  const rssDataByGroup = (group: string, rssData: RssData | undefined) => {
-    const groupData: RssEntry[] = []
+  watchEffect(() => {
+    collects.value = collects.value.map((collect) => {
+      const feed = feedGroup.groups.find(group => group.items.find(item => item.title === collect.title))
 
-    if (!rssData)
-      return groupData
+      if (feed)
+        collect.groupBy = feed.name
+      else
+        collect.groupBy = undefined
 
-    for (const content of rssData.contents) {
-      content.entries.reduce((acc, entry) => {
-        if (entry.groupBy?.includes(group) || entry.siteTitle === group)
-          acc.push(entry)
+      return collect
+    })
+  })
 
-        return acc
-      }, groupData)
+  const fetchGroupedFeeds = (group: string) => {
+    const groupedFeeds: Feed[] = []
+
+    if (!data.value)
+      return groupedFeeds
+
+    for (const feed of data.value.contents) {
+      if (group === feed.groupBy)
+        groupedFeeds.push(feed)
     }
 
-    return groupData
+    return groupedFeeds
+  }
+
+  const fetchFeed = (title: string): Feed[] => {
+    if (!data.value)
+      return []
+
+    console.log(title)
+    console.log(data.value.contents.filter(feed => feed.feedTitle === title))
+
+    return data.value.contents.filter(feed => feed.feedTitle === title)
   }
 
   return {
-    rssData,
-    rssDataByGroup,
+    data,
+    contents,
+    collects,
+    fetchFeed,
+    fetchGroupedFeeds,
   }
 })

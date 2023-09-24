@@ -1,31 +1,31 @@
 <script setup lang="ts">
 import { NInput } from 'naive-ui'
 import Fuse from 'fuse.js'
-import type { RssContents, RssEntry } from '~/types/rss'
+import type { Feed } from '~/types/feeds'
 import type { FuseOptions } from '~/types/fuse'
 
-const props = defineProps<{ contents: RssContents[] }>()
+const props = defineProps<{ contents: Feed[] }>()
 
 const searchQuery = ref('')
 
 const fuseOptions = ref<FuseOptions>({
-  keys: ['siteTitle', 'postTitle', 'description'],
+  keys: ['feedTitle', 'postTitle', 'description'],
   includeScore: true,
 })
 
 const target = shallowRef<HTMLDivElement | null>(null)
-const result = ref<RssEntry[]>([])
+const result = ref<Feed[]>([])
 
 // 当 result 变化时，重新调用一次 lazyData，同时返回 lazyData 中响应式 切片数据
-const displayData = lazyData(target, result, 20, 10, { threshold: 0.1, rootMargin: '0px 0px 100px 0px' })
+const lazyResult = lazyData(target, result, 20, 20, { threshold: 0.1 })
 
 let timeId: number
 function handleSearch() {
-  if (displayData.value)
+  if (lazyResult.value)
     result.value = []
 
   timeId = window.setTimeout(() => {
-    const fuse = new Fuse(props.contents.map(item => item.entries).flat(), fuseOptions.value)
+    const fuse = new Fuse(props.contents, fuseOptions.value)
     result.value = fuse.search(searchQuery.value).map(item => item.item)
   }, 100)
 }
@@ -50,7 +50,7 @@ onUnmounted(() => {
         <SearchOptions v-model="fuseOptions" :on-enter="handleSearch" />
       </div>
       <div>
-        <DataView date-type="year" :display-data="displayData" />
+        <DataView :group="false" :feed="lazyResult" />
         <div ref="target" />
       </div>
     </div>

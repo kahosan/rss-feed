@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { NButton, NMenu } from 'naive-ui'
 import { storeToRefs } from 'pinia'
-import { useRssGroup } from '~/store/rss-group'
+import { useFeedGroup } from '~/store/feed-group'
 
 const props = defineProps<{
   isSideBarVisible: boolean
@@ -13,8 +13,8 @@ const visibleCss = computed(() => {
   return props.isSideBarVisible ? 'left-0' : 'left--80'
 })
 
-const { currentGroup, rssGroup } = storeToRefs(useRssGroup())
-const { setCurrentGroup } = useRssGroup()
+const { groups } = storeToRefs(useFeedGroup())
+const { setCurrentGroup, setCurrentFeed } = useFeedGroup()
 
 const openSelectModal = ref(false)
 const toggleSelectModal = () => openSelectModal.value = !openSelectModal.value
@@ -28,20 +28,30 @@ const menuOptions = computed(() => [
     key: 'default',
     icon: listIcon,
   },
-  ...rssGroup?.value?.map(group => ({
+  ...groups.value.map(group => ({
     label: group.name,
     key: group.name,
     icon: listIcon,
-    children: group.items.map(item => ({
-      label: item.title,
-      key: item.title,
+    children: group.items.map(feed => ({
+      label: feed.title,
+      key: feed.title,
       icon: listIcon,
     })),
-  })) ?? [],
+  })),
 ])
 
 function handleExpendKey(key: string[]) {
   setCurrentGroup(key[0] || 'default')
+}
+
+function handleFeedUpdate(feed: string) {
+  if (feed !== 'default') {
+    setCurrentFeed(feed)
+  }
+  else {
+    setCurrentGroup('default')
+    setCurrentFeed(undefined)
+  }
 }
 </script>
 
@@ -59,10 +69,10 @@ function handleExpendKey(key: string[]) {
       </div>
       <NMenu
         accordion
-        :on-update:value="group => setCurrentGroup(group)"
+        :on-update:value="feed => handleFeedUpdate(feed)"
         :on-update:expanded-keys="key => handleExpendKey(key)"
         :options="menuOptions"
-        :default-value="currentGroup"
+        default-value="default"
       />
       <NButton @click="toggleSelectModal">
         <div class="i-carbon-add" mr-2 />
@@ -70,6 +80,6 @@ function handleExpendKey(key: string[]) {
       </NButton>
     </div>
     <SelectModal :is-open="openSelectModal" :toggle-modal="toggleSelectModal" />
-    <SettingModal :is-open="openSettingModal" :toggle-modal="toggleSettingModal" />
+    <SettingsModal :is-open="openSettingModal" :toggle-modal="toggleSettingModal" />
   </aside>
 </template>

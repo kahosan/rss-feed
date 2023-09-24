@@ -4,35 +4,13 @@ import { storeToRefs } from 'pinia'
 
 import type { DataSource } from './types/source'
 
-import { useRssGroup } from './store/rss-group'
+import { useFeedGroup } from './store/feed-group'
+import type { Feed } from './types/feeds'
 import { useRssData } from '~/store/rss-data'
 
-const { rssData } = storeToRefs(useRssData())
-const { rssDataByGroup } = useRssData()
-const { currentGroup } = storeToRefs(useRssGroup())
-
-const years = ref<number[]>([])
-const tocYears = ref<number[]>([])
-
-watchEffect(() => {
-  years.value = [...new Set(rssData.value?.contents.map(content => content.year))]
-  tocYears.value = toValue(years)
-})
-
-// const changeYear = (year: number) => {
-//   years.value = tocYears.value.filter(y => y <= year)
-// }
-
-function yearData(year: number) {
-  const contents = []
-
-  for (const content of rssData.value?.contents ?? []) {
-    if (content.year === year)
-      contents.push(content)
-  }
-
-  return contents
-}
+const { data, contents } = storeToRefs(useRssData())
+const { fetchGroupedFeeds, fetchFeed } = useRssData()
+const { currentGroup, currentFeed } = storeToRefs(useFeedGroup())
 
 const source = ref<DataSource>('default')
 const active = (s: DataSource) => source.value === s
@@ -42,18 +20,31 @@ function changeSource(s: DataSource) {
 }
 
 const target = shallowRef<HTMLDivElement | null>(null)
-const displayDataByYear = lazyData(target, years, 0, 1, { threshold: 0.1 })
+const lazyFeeds = ref<Feed[]>([])
+watchEffect(() => {
+  lazyFeeds.value = lazyData(target, contents, 20, 20, { threshold: 0.1 }).value
+})
 
 const isSideBarVisible = ref(false)
 function toggleSideBarVisible() {
   isSideBarVisible.value = !isSideBarVisible.value
 }
 
-const rssGroupData = computed(() => rssDataByGroup(currentGroup.value, rssData.value))
+const feedGroupData = computed(() => {
+  if (currentFeed.value)
+    return fetchFeed(currentFeed.value)
+
+  return fetchGroupedFeeds(currentGroup.value)
+})
+
 watch(
   currentGroup,
   () => scrollTo(0, 0),
 )
+
+const groupShow = computed(() => {
+  return currentGroup.value !== 'default' || !!currentFeed.value
+})
 </script>
 
 <template>
@@ -62,26 +53,24 @@ watch(
       <VHeader :change-source="changeSource" :active="active" :is-side-bar-visible="isSideBarVisible" :toggle-side-bar-visible="toggleSideBarVisible" />
       <SideBar :is-side-bar-visible="isSideBarVisible" />
       <main p-4 pt-16 md:ml-80>
-        <div v-if="rssData?.contents" relative mx-auto max-w-6xl min-w-0 flex-1>
+        <div v-if="data" relative mx-auto max-w-6xl min-w-0 flex-1>
           <div v-if="source === 'default'">
             <div v-show="currentGroup === 'default'">
-              <div v-for="year in displayDataByYear" :key="year">
-                <Years :year="year" :year-data="yearData(year)" />
-              </div>
+              <DataView :group="false" :feed="lazyFeeds" />
               <div ref="target" />
             </div>
-            <div v-show="currentGroup !== 'default'">
-              <DataView date-type="year" :display-data="rssGroupData" />
+            <div v-show="groupShow">
+              <DataView :group="true" :feed="feedGroupData" />
             </div>
           </div>
           <div v-else-if="source === 'search'">
-            <SearchData :contents="rssData.contents" />
+            <SearchData :contents="data.contents" />
           </div>
           <div v-else-if="source === 'unknownDate'">
-            <UnknownDate :data="rssData.unknownDate" />
+            <UnknownDate :data="data.unknownDate" />
           </div>
-          <div v-else-if="source === 'unknownURI'">
-            <UnknownURI :data="rssData.unknownURI" />
+          <div v-else-if="source === 'unknownURL'">
+            <UnknownURL :data="data.unknownURL" />
           </div>
         </div>
         <div v-else mx-auto max-w-6xl>
