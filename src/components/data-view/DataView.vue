@@ -1,31 +1,38 @@
 <script setup lang="ts">
 import pangu from 'pangu'
-import { getYear } from 'date-fns'
-import type { RssEntry } from '~/types/rss'
+import { formatISO } from 'date-fns'
 
-const { dateType } = defineProps<{ dateType: 'year' | 'monthDay'; displayData: RssEntry[] }>()
+import type { Feed } from '~/types/feeds'
 
-function date(monthDay: string, published: string | Date) {
-  const year = getYear(new Date(published))
-  return dateType === 'year' ? `${year}-${monthDay}` : monthDay
+const props = defineProps<{ group: boolean; feed: Feed[] }>()
+
+function date(published: Date) {
+  return formatISO(published, { representation: 'date' })
+}
+
+function isHidden(item: Feed) {
+  if (!props.group)
+    return typeof item.hidden === 'boolean' ? !item.hidden : true
+
+  return true
 }
 </script>
 
 <template>
-  <div v-for="entry in displayData" :key="entry.id" mb-8>
+  <div v-for="item in feed" v-show="isHidden(item)" :key="item.id" mb-8>
     <div flex="~ justify-between items-center" min-h-14>
       <div max-w-xl overflow-hidden>
-        <a target="_blank" :href="entry.postLink" cursor-pointer text-5 font-bold transition hover:op-60>
-          {{ pangu.spacing(entry.postTitle) }}
+        <a target="_blank" :href="item.postLink" cursor-pointer text-5 font-bold transition hover:op-60>
+          {{ pangu.spacing(item.postTitle) }}
         </a>
         <p max-w-140 truncate text-3.5 op-60>
-          {{ pangu.spacing(entry.description) || '没有描述' }}
+          {{ pangu.spacing(item.postDescription) || '没有描述' }}
         </p>
       </div>
       <div ml-4 max-w-28 min-w-28 overflow-hidden text-4 text-secondary>
-        <p>{{ date(entry.monthDay, entry.published) }}</p>
-        <a target="_blank" block cursor-pointer truncate transition hover:op-60 :href="entry.siteLink">
-          {{ entry.siteTitle }}
+        <p>{{ date(new Date(item.postPublished)) }}</p>
+        <a target="_blank" :href="item.feedLink" block cursor-pointer truncate transition hover:op-60>
+          {{ item.feedTitle }}
         </a>
       </div>
     </div>

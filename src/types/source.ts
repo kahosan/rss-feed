@@ -1,1 +1,1 @@
-export type DataSource = 'default' | 'unknownDate' | 'unknownURI' | 'search'
+export type DataSource = 'default' | 'unknownDate' | 'unknownURL' | 'search'

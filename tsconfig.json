@@ -18,6 +18,6 @@
       "~/*": ["src/*"]
     }
   },
-  "include": ["components.d.ts", "auto-imports.d.ts", "src/**/*", "gen_data.ts", "uno.config.ts", "vite.config.ts"],
+  "include": ["components.d.ts", "auto-imports.d.ts", "src/**/*", "gen_data.ts", "uno.config.ts", "vite.config.ts", "shims.d.ts"],
   "exclude": ["dist", "node_modules"]
 }
