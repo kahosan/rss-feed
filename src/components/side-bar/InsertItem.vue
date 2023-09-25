@@ -48,11 +48,14 @@ onUnmounted(() => clean())
 </script>
 
 <template>
-  <NCheckboxGroup v-model:value="selectedGroup" :max="1">
+  <NCheckboxGroup v-if="!!groups.length" v-model:value="selectedGroup" :max="1">
     <NCheckbox v-for="group in groups" :key="group.name" :value="group.name">
       {{ group.name }}
     </NCheckbox>
   </NCheckboxGroup>
+  <p v-else>
+    暂无分组
+  </p>
   <NDivider />
   <div flex gap-2>
     <NSelect

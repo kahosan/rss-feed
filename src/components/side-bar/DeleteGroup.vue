@@ -33,9 +33,9 @@ onUnmounted(() => selected.value = [])
     <NSelect
       v-model:value="selected"
       :options="options"
-      multiple
+
       placeholder="请选择要删除的分组"
-      clearable
+      clearable multiple
     />
     <NButton @click="handleDelete">
       删除
