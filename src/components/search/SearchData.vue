@@ -9,7 +9,7 @@ const props = defineProps<{ contents: Feed[] }>()
 const searchQuery = ref('')
 
 const fuseOptions = ref<FuseOptions>({
-  keys: ['feedTitle', 'postTitle', 'description'],
+  keys: ['feedTitle', 'postTitle', 'postDescription'],
   includeScore: true,
 })
 

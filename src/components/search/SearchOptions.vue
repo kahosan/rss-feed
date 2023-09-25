@@ -22,10 +22,10 @@ watch(
       <NCheckbox value="postTitle">
         标题
       </NCheckbox>
-      <NCheckbox value="description">
+      <NCheckbox value="postDescription">
         描述
       </NCheckbox>
-      <NCheckbox value="siteTitle">
+      <NCheckbox value="feedTitle">
         站点
       </NCheckbox>
     </NCheckboxGroup>
