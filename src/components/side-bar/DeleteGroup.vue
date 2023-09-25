@@ -37,7 +37,7 @@ onUnmounted(() => selected.value = [])
       placeholder="请选择要删除的分组"
       clearable multiple
     />
-    <NButton @click="handleDelete">
+    <NButton strong secondary @click="handleDelete">
       删除
     </NButton>
   </div>

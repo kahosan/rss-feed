@@ -74,7 +74,7 @@ function handleFeedUpdate(feed: string) {
         :options="menuOptions"
         default-value="default"
       />
-      <NButton @click="toggleSelectModal">
+      <NButton strong secondary @click="toggleSelectModal">
         <div class="i-carbon-add" mr-2 />
         添加分组
       </NButton>

@@ -61,7 +61,7 @@ onUnmounted(() => clean())
       placeholder="请选择要删除的站点"
       clearable multiple
     />
-    <NButton @click="handleDelete">
+    <NButton strong secondary @click="handleDelete">
       删除
     </NButton>
   </div>
