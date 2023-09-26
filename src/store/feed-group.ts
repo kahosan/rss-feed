@@ -2,9 +2,7 @@ import { defineStore } from 'pinia'
 import type { FeedGroup, FeedGroupItem } from '~/types/feeds'
 
 export const useFeedGroup = defineStore('feed-group', () => {
-  const groups = ref<FeedGroup[]>([])
-  const local = localStorage.getItem('FEED_GROUP')
-  groups.value = local ? JSON.parse(local) : []
+  const groups = useStorage<FeedGroup[]>('feed-group', [])
 
   // eslint-disable-next-line @typescript-eslint/ban-types
   const currentGroup = ref<'default' | (string & {})>('default')
@@ -15,7 +13,6 @@ export const useFeedGroup = defineStore('feed-group', () => {
 
   const createGroup = (name: string, items: FeedGroupItem[]) => {
     groups.value = [...groups.value, { name, items }]
-    localStorage.setItem('FEED_GROUP', JSON.stringify(groups.value))
   }
 
   const insertItem = (name: string, item: FeedGroupItem) => {
@@ -31,12 +28,10 @@ export const useFeedGroup = defineStore('feed-group', () => {
             }
           : group,
       )
-    localStorage.setItem('FEED_GROUP', JSON.stringify(groups.value))
   }
 
   const removeGroup = (name: string) => {
     groups.value = groups.value.filter(item => item.name !== name)
-    localStorage.setItem('FEED_GROUP', JSON.stringify(groups.value))
   }
 
   const removeItem = (name: string, item: string) => {
@@ -49,7 +44,6 @@ export const useFeedGroup = defineStore('feed-group', () => {
             }
           : group,
       )
-    localStorage.setItem('FEED_GROUP', JSON.stringify(groups.value))
   }
 
   return {
