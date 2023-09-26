@@ -56,11 +56,11 @@ const groupShow = computed(() => {
         <div v-if="data" relative mx-auto max-w-6xl min-w-0 flex-1>
           <div v-if="source === 'default'">
             <div v-show="currentGroup === 'default'">
-              <DataView :group="false" :feed="lazyFeeds" />
+              <DataView :group="false" :feeds="lazyFeeds" />
               <div ref="target" />
             </div>
             <div v-show="groupShow">
-              <DataView :group="true" :feed="feedGroupData" />
+              <DataView :group="true" :feeds="feedGroupData" />
             </div>
           </div>
           <div v-else-if="source === 'search'">

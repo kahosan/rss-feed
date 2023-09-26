@@ -50,7 +50,7 @@ onUnmounted(() => {
         <SearchOptions v-model="fuseOptions" :on-enter="handleSearch" />
       </div>
       <div>
-        <DataView :group="false" :feed="lazyResult" />
+        <DataView :group="false" :feeds="lazyResult" />
         <div ref="target" />
       </div>
     </div>
