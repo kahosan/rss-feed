@@ -7,7 +7,7 @@ defineProps<{ data: UnknownDate[] }>()
 <template>
   <div text-5>
     <div mb-4>
-      <div v-for="entry in data" :key="entry.id" mb-8>
+      <div v-for="entry of data" :key="entry.id" mb-8>
         <div flex="~ justify-between" min-h-14>
           <div mr-4 overflow-hidden>
             <a target="_blank" :href="entry.postLink" transition hover:op-60>{{ entry.postTitle }}</a>

@@ -45,7 +45,7 @@ onUnmounted(() => clean())
 
 <template>
   <NCheckboxGroup v-if="!!groups.length" v-model:value="selectedGroup" :max="1">
-    <NCheckbox v-for="group in groups" :key="group.name" :value="group.name">
+    <NCheckbox v-for="group of groups" :key="group.name" :value="group.name">
       {{ group.name }}
     </NCheckbox>
   </NCheckboxGroup>

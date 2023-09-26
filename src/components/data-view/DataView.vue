@@ -19,7 +19,7 @@ function isHidden(item: Feed) {
 </script>
 
 <template>
-  <div v-for="item in feed" v-show="isHidden(item)" :key="item.id" mb-8>
+  <div v-for="item of feed" v-show="isHidden(item)" :key="item.id" mb-8>
     <div flex="~ justify-between items-center" min-h-14>
       <div max-w-xl overflow-hidden>
         <a target="_blank" :href="item.postLink" cursor-pointer text-5 font-bold transition hover:op-60>
