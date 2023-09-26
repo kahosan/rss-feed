@@ -37,7 +37,7 @@ const isActive = (s: DataSource) => props.active(s) && 'op-60'
           <button :class="isActive('unknownDate')" @click="() => changeSource('unknownDate')">
             未知时间
           </button>
-          <button :class="isActive('unknownURI')" @click="() => changeSource('unknownURI')">
+          <button :class="isActive('unknownURL')" @click="() => changeSource('unknownURL')">
             失败列表
           </button>
         </div>
