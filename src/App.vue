@@ -52,7 +52,7 @@ const groupShow = computed(() => {
     <NMessageProvider>
       <VHeader :change-source="changeSource" :active="active" :is-side-bar-visible="isSideBarVisible" :toggle-side-bar-visible="toggleSideBarVisible" />
       <SideBar :is-side-bar-visible="isSideBarVisible" />
-      <main p-4 pt-16 md:ml-80>
+      <main p-4 pt-20 md:ml-80>
         <div v-if="data" relative mx-auto max-w-6xl min-w-0 flex-1>
           <div v-if="source === 'default'">
             <div v-show="currentGroup === 'default'">

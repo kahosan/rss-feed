@@ -11,17 +11,13 @@ declare module 'vue' {
     DeleteGroup: typeof import('./src/components/side-bar/DeleteGroup.vue')['default']
     DeleteItem: typeof import('./src/components/side-bar/DeleteItem.vue')['default']
     InsertItem: typeof import('./src/components/side-bar/InsertItem.vue')['default']
-    MonthsDay: typeof import('./src/components/months-day/MonthsDay.vue')['default']
     SearchData: typeof import('./src/components/search/SearchData.vue')['default']
     SearchOptions: typeof import('./src/components/search/SearchOptions.vue')['default']
     SelectModal: typeof import('./src/components/side-bar/SelectModal.vue')['default']
-    SettingModal: typeof import('./src/components/side-bar/SettingModal.vue')['default']
     SettingsModal: typeof import('./src/components/side-bar/SettingsModal.vue')['default']
     SideBar: typeof import('./src/components/side-bar/SideBar.vue')['default']
     UnknownDate: typeof import('./src/components/unknowns/UnknownDate.vue')['default']
-    UnknownURI: typeof import('./src/components/unknowns/UnknownURI.vue')['default']
     UnknownURL: typeof import('./src/components/unknowns/UnknownURL.vue')['default']
     VHeader: typeof import('./src/components/header/VHeader.vue')['default']
-    Years: typeof import('./src/components/years/Years.vue')['default']
   }
 }
