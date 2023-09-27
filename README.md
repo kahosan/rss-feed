@@ -4,9 +4,9 @@
 
 ## 使用
 
-fork 本项目，将 rss 链接添加到 `rss_manual.json` 文件中，注意保持原有格式
+fork 本项目，将 rss 链接添加到 `feed_manual.json` 文件中，注意保持原有格式
 
-如果你想自动检测 RSS 链接，将网站链接添加到 `rss.json` 文件中
+如果你想自动检测 RSS 链接，将网站链接添加到 `feed_list.json` 文件中
 
 ## 定时更新
 
