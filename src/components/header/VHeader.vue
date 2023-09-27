@@ -10,11 +10,6 @@ const props = defineProps<{
 }>()
 
 const isActive = (s: DataSource) => props.active(s) && 'op-60'
-
-// const options = computed(() => props.tocYears.map(year => ({
-//   label: year.toString(),
-//   key: year,
-// })))
 </script>
 
 <template>
@@ -23,7 +18,7 @@ const isActive = (s: DataSource) => props.active(s) && 'op-60'
       <h2 text-5 class="lt-md:hidden!">
         RSS Feed
       </h2>
-      <NButton class="md:hidden!" @click="toggleSideBarVisible">
+      <NButton secondary class="md:hidden!" @click="toggleSideBarVisible">
         <div class="i-carbon:list text-4" />
       </NButton>
       <div flex="~ items-center">
