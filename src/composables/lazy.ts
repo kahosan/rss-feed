@@ -5,6 +5,7 @@ export function lazyData<T>(target: Ref<HTMLDivElement | null>, data: Ref<T[]>, 
   watch(
     data,
     newData => displayData.value = newData.slice(0, end),
+    { immediate: true },
   )
 
   const loadMore = () => {

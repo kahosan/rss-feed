@@ -17,7 +17,7 @@ const target = shallowRef<HTMLDivElement | null>(null)
 const result = ref<Feed[]>([])
 
 // 当 result 变化时，重新调用一次 lazyData，同时返回 lazyData 中响应式 切片数据
-const lazyResult = lazyData(target, result, 20, 20, { threshold: 0.1 })
+const lazyResult = lazyData(target, result, 20, 20)
 
 let timeId: number
 function handleSearch() {
