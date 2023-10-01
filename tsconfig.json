@@ -1,23 +1,39 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "module": "ESNext",
     "target": "ESNext",
-    "lib": ["DOM", "ESNext"],
-    "strict": true,
+    "lib": [
+      "DOM",
+      "ESNext"
+    ],
     "jsx": "preserve",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
+    "module": "ESNext",
     "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "noUnusedLocals": true,
-    "strictNullChecks": true,
-    "allowJs": true,
-    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
     "paths": {
-      "~/*": ["src/*"]
-    }
+      "~/*": [
+        "src/*"
+      ]
+    },
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "noUnusedLocals": true,
+    "skipLibCheck": true
   },
-  "include": ["components.d.ts", "auto-imports.d.ts", "src/**/*", "gen_data.ts", "uno.config.ts", "vite.config.ts", "shims.d.ts"],
-  "exclude": ["dist", "node_modules"]
+  "include": [
+    "components.d.ts",
+    "auto-imports.d.ts",
+    "src/**/*",
+    "gen_data.ts",
+    "uno.config.ts",
+    "vite.config.ts",
+    "shims.d.ts"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
 }

@@ -4,7 +4,6 @@ import type { FeedGroup, FeedGroupItem } from '~/types/feeds'
 export const useFeedGroup = defineStore('feed-group', () => {
   const groups = useStorage<FeedGroup[]>('feed-group', [])
 
-  // eslint-disable-next-line @typescript-eslint/ban-types
   const currentGroup = ref<'default' | (string & {})>('default')
   const setCurrentGroup = (group: string) => currentGroup.value = group
 
