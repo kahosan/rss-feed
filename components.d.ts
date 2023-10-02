@@ -11,6 +11,7 @@ declare module 'vue' {
     DeleteGroup: typeof import('./src/components/side-bar/DeleteGroup.vue')['default']
     DeleteItem: typeof import('./src/components/side-bar/DeleteItem.vue')['default']
     InsertItem: typeof import('./src/components/side-bar/InsertItem.vue')['default']
+    RenameGroup: typeof import('./src/components/side-bar/RenameGroup.vue')['default']
     SearchData: typeof import('./src/components/search/SearchData.vue')['default']
     SearchOptions: typeof import('./src/components/search/SearchOptions.vue')['default']
     SelectModal: typeof import('./src/components/side-bar/SelectModal.vue')['default']

@@ -18,15 +18,25 @@ export const useFeedGroup = defineStore('feed-group', () => {
     if (!groups.value)
       throw new Error('group is undefined')
 
-    groups.value = groups.value
-      .map(group =>
-        group.name === name
-          ? {
-              ...group,
-              items: [...group.items, item],
-            }
-          : group,
-      )
+    groups.value = groups.value.map(group =>
+      group.name === name
+        ? {
+            ...group,
+            items: [...group.items, item],
+          }
+        : group,
+    )
+  }
+
+  const renameGroup = (oldName: string, newName: string) => {
+    groups.value = groups.value.map(group =>
+      group.name === oldName
+        ? {
+            ...group,
+            name: newName,
+          }
+        : group,
+    )
   }
 
   const removeGroup = (name: string) => {
@@ -34,15 +44,14 @@ export const useFeedGroup = defineStore('feed-group', () => {
   }
 
   const removeItem = (name: string, item: string) => {
-    groups.value = groups.value
-      .map(group =>
-        group.name === name
-          ? {
-              ...group,
-              items: group.items.filter(i => i.title !== item),
-            }
-          : group,
-      )
+    groups.value = groups.value.map(group =>
+      group.name === name
+        ? {
+            ...group,
+            items: group.items.filter(i => i.title !== item),
+          }
+        : group,
+    )
   }
 
   return {
@@ -53,6 +62,7 @@ export const useFeedGroup = defineStore('feed-group', () => {
     setCurrentFeed,
     createGroup,
     insertItem,
+    renameGroup,
     removeGroup,
     removeItem,
   }

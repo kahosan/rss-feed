@@ -20,6 +20,9 @@ function cancel() {
     mt-30
   >
     <NTabs type="line" justify-content="space-evenly" animated>
+      <NTabPane name="重命名分组">
+        <RenameGroup />
+      </NTabPane>
       <NTabPane name="删除分组">
         <DeleteGroup />
       </NTabPane>
