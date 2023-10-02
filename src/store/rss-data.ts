@@ -67,9 +67,6 @@ export const useRssData = defineStore('rss-data', () => {
     if (!data.value)
       return []
 
-    console.log(title)
-    console.log(data.value.contents.filter(feed => feed.feedTitle === title))
-
     return data.value.contents.filter(feed => feed.feedTitle === title)
   }
 
