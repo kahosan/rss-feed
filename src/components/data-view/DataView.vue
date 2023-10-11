@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import pangu from 'pangu'
 import { formatISO } from 'date-fns'
-
 import { NCard, NTag } from 'naive-ui'
+import { normalizationTitle } from '~/utils'
+
 import type { Feed } from '~/types/feeds'
 
 const props = defineProps<{ group: boolean; feeds: Feed[] }>()
@@ -24,7 +25,7 @@ function isHidden(item: Feed) {
     <div flex="~ justify-between items-center" min-h-14>
       <div max-w-2xl overflow-hidden>
         <a target="_blank" :href="feed.postLink" cursor-pointer text-5 font-bold transition lt-md:text-4.5 hover:op-60>
-          {{ pangu.spacing(feed.postTitle) }}
+          {{ pangu.spacing(normalizationTitle(feed.postTitle)) }}
         </a>
         <div mt-2 flex items-center gap-2 md:hidden>
           <NTag size="small" :bordered="false" type="primary">
