@@ -10,3 +10,5 @@ node_modules
 rss_data.json
 
 .vscode
+
+_feed_list.json
