@@ -152,7 +152,6 @@
   "https://soulteary.com/feed/",
   "https://www.ducksoft.site/rss-feed.xml",
   "https://icloudnative.io/index.xml",
-  "https://ttys3.dev/atom.xml",
   "https://mozz.ie/index.xml",
   "https://diygod.me/feed?format=xml",
   "https://liolok.com/atom.xml",
@@ -168,7 +167,6 @@
   "https://alexsidorenko.com/rss.xml",
   "https://kau.sh/feed.xml",
   "https://zhangguanzhang.github.io/atom.xml",
-  "https://candinya.com/atom.xml",
   "https://ambar.li/rss.xml",
   "https://catcoding.me/atom.xml",
   "https://biji.io/feed",
@@ -229,5 +227,7 @@
   "https://zwkang.com/feed",
   "https://blog.men.ci/atom.xml",
   "https://lutaonan.com/rss",
-  "https://nekosc.com/feed/"
+  "https://nekosc.com/feed/",
+  "https://mtlynch.io/index.xml",
+  "https://razeen.me/index.xml"
 ]
