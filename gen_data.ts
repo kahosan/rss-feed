@@ -64,7 +64,7 @@ const requests = feeds.map(feed_url => limit(async () => {
 
       rss_data.contents.push({
         ...feed_item,
-        postPublished: entry.published,
+        postPublished: (entry.published as unknown as string).replace('&#43;', '+'),
       })
     }
   }

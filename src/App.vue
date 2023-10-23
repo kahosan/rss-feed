@@ -22,7 +22,7 @@ function changeSource(s: DataSource) {
 const target = shallowRef<HTMLDivElement | null>(null)
 const lazyFeeds = ref<Feed[]>([])
 watchEffect(() => {
-  lazyFeeds.value = lazyData(target, contents, 20, 20).value
+  lazyFeeds.value = lazyData(target, contents, 20, 100).value
 })
 
 const isSideBarVisible = ref(false)
