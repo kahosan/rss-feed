@@ -64,6 +64,7 @@ onUnmounted(() => clean())
       multiple
       placeholder="请选择要添加的站点"
       clearable
+      filterable
     />
     <NButton strong secondary @click="handleInsert">
       添加

@@ -59,7 +59,7 @@ onUnmounted(() => clean())
       :options="options"
 
       placeholder="请选择要删除的站点"
-      clearable multiple
+      clearable multiple filterable
     />
     <NButton strong secondary @click="handleDelete">
       删除
