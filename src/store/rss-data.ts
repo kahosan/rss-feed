@@ -12,9 +12,11 @@ export const useRssData = defineStore('rss-data', () => {
 
   import ('~/assets/rss_data.json')
     .then((value) => {
-      data.value = value
-      contents.value = value.contents
-      collects.value = value.collects
+      const rssData = value.default as RssData
+
+      data.value = rssData
+      contents.value = rssData.contents
+      collects.value = rssData.collects
     })
 
   watchEffect(() => {
@@ -25,7 +27,7 @@ export const useRssData = defineStore('rss-data', () => {
 
       if (item) {
         feed.groupBy = item.name
-        feed.hidden = item.items.at(0)?.hidden
+        feed.hidden = item.items.find(item => item.title === feed.feedTitle)?.hidden
       }
       else {
         feed.groupBy = undefined

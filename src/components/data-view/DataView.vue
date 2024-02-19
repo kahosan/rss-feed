@@ -18,6 +18,11 @@ function isHidden(item: Feed) {
 
   return true
 }
+
+props.feeds.forEach((feed) => {
+  if (feed.feedTitle === '字节星球')
+    console.log(feed.hidden)
+})
 </script>
 
 <template>
