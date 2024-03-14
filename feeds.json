@@ -209,7 +209,6 @@
   "https://kwaa.dev/atom.xml",
   "https://lifelonglearn.ing/feed/atom",
   "https://feeds.feedburner.com/ruanyifeng",
-  "https://nova.moe/feed/",
   "https://54df.cc/feed/atom/",
   "https://soha.moe/feed/",
   "https://ysicing.me/atom.xml",
@@ -239,5 +238,6 @@
   "https://geekplux.com/feed.xml",
   "https://missuo.me/index.xml",
   "https://chawyehsu.com/feed",
-  "https://blog.nest.moe/rss.xml"
+  "https://blog.nest.moe/rss.xml",
+  "https://kirikira.moe/rss"
 ]
