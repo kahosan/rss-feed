@@ -1,3 +1,3 @@
-import { vue } from 'eslint-config-kaho'
+import antfu from '@antfu/eslint-config'
 
-export default vue({ ignores: ['shims.d.ts'], jsonc: false })
+export default antfu({ ignores: ['shims.d.ts'], jsonc: false })
