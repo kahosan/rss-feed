@@ -6,7 +6,7 @@ import { normalizationTitle } from '~/utils'
 
 import type { Feed } from '~/types/feeds'
 
-const props = defineProps<{ group: boolean; feeds: Feed[] }>()
+const props = defineProps<{ group: boolean, feeds: Feed[] }>()
 
 function date(published: Date) {
   return formatISO(published, { representation: 'date' })
@@ -18,11 +18,6 @@ function isHidden(item: Feed) {
 
   return true
 }
-
-props.feeds.forEach((feed) => {
-  if (feed.feedTitle === '字节星球')
-    console.log(feed.hidden)
-})
 </script>
 
 <template>
