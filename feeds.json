@@ -51,7 +51,6 @@
   "https://blog.vadxq.com/atom.xml",
   "https://www.xiabingbao.com/atom.xml",
   "https://surmon.me/rss.xml",
-  "https://xlbd.me/feed.xml",
   "https://www.imaegoo.com/atom.xml",
   "https://ssshooter.com/rss.xml",
   "https://knightyun.github.io/feed.xml",
@@ -242,5 +241,6 @@
   "https://blog.nest.moe/rss.xml",
   "https://diygod.cc/feed",
   "https://blog.yunyuyuan.net/sitemap.xml",
-  "https://www.jimmytian.com/feed/"
+  "https://www.jimmytian.com/feed/",
+  "https://blog.mitsea.com/index.xml"
 ]
