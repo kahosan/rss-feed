@@ -1,6 +1,6 @@
 export interface RssData {
-  'unknownURL': string[]
-  'unknownDate': UnknownDate[]
+  unknownURL: string[]
+  unknownDate: UnknownDate[]
   contents: Feed[]
   collects: FeedCollect[]
 }
