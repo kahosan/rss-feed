@@ -187,7 +187,6 @@
   "https://pyonpyon.today/rss.xml",
   "https://www.skywind.me/blog/feed",
   "https://nora-ranokan.blog.jp/index.rdf",
-  "https://pythoncat.top/rss.xml",
   "https://yfzhe.github.io/feeds/all.rss.xml",
   "https://strrl.dev/index.xml",
   "https://blog.suysker.xyz/rss.xml",
@@ -241,5 +240,6 @@
   "https://blog.mitsea.com/index.xml",
   "https://xinalin.com/86/proxmox-ve-host-configuration/feed",
   "https://blog.lyc8503.site/atom.xml",
-  "https://xujiwei.com/blog/feed/"
+  "https://xujiwei.com/blog/feed/",
+  "https://blog.ldora.cn/feed/"
 ]
