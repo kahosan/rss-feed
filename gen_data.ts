@@ -16,7 +16,8 @@ interface F extends Required<FeedData> {
 const limit = plimit(4)
 
 const headers = {
-  'User-Agent': 'YJSNPI-RSS-Reader/1.0',
+  // 'User-Agent': 'YJSNPI-RSS-Reader/1.0',
+  'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36',
   'Origin': 'https://www.google.com',
   'Referer': 'https://www.google.com/',
 }
