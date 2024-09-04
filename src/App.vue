@@ -2,10 +2,10 @@
 import { NConfigProvider, NMessageProvider, darkTheme } from 'naive-ui'
 import { storeToRefs } from 'pinia'
 
+import type { Feed } from './types/feeds'
 import type { DataSource } from './types/source'
 
 import { useFeedGroup } from './store/feed-group'
-import type { Feed } from './types/feeds'
 import { useRssData } from '~/store/rss-data'
 
 const { data, contents } = storeToRefs(useRssData())
@@ -13,14 +13,18 @@ const { fetchGroupedFeeds, fetchFeed } = useRssData()
 const { currentGroup, currentFeed } = storeToRefs(useFeedGroup())
 
 const source = ref<DataSource>('default')
-const active = (s: DataSource) => source.value === s
 
-function changeSource(s: DataSource) {
-  source.value = s
+function active(target: DataSource) {
+  return source.value === target
+}
+
+function changeSource(target: DataSource) {
+  source.value = target
 }
 
 const target = shallowRef<HTMLDivElement | null>(null)
 const lazyFeeds = ref<Feed[]>([])
+
 watchEffect(() => {
   lazyFeeds.value = lazyData(target, contents, 20, 100).value
 })
