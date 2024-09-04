@@ -26,7 +26,8 @@ export function lazyData<T>(target: Ref<HTMLDivElement | null>, data: Ref<T[]>, 
     target,
     (target) => {
       const observer = new IntersectionObserver(intersectionCallback, observerOptions)
-      target && observer.observe(target)
+      if (target)
+        observer.observe(target)
     },
     { immediate: true, flush: 'post' },
   )
