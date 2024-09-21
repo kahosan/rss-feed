@@ -3,8 +3,8 @@ account_id = "689fc74db37d94d7bf42a5bbf4931407"
 workers_dev = false
 route = "rss.hitorinbc.com/*"
 usage_model = "bundled"
+main = "./src/workers-site/index.js"
 
 [site]
 bucket = "./dist"
 
-main = "workers-site/index.js"
