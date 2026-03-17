@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { NInput } from 'naive-ui'
-import Fuse from 'fuse.js'
 import type { Feed } from '~/types/feeds'
 import type { FuseOptions } from '~/types/fuse'
+import Fuse from 'fuse.js'
+import { NInput } from 'naive-ui'
 
 const props = defineProps<{ contents: Feed[] }>()
 

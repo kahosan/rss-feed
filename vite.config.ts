@@ -1,11 +1,9 @@
-/// <reference types="vitest" />
-
 import path from 'node:path'
-import { defineConfig } from 'vite'
 import Vue from '@vitejs/plugin-vue'
-import Components from 'unplugin-vue-components/vite'
-import AutoImport from 'unplugin-auto-import/vite'
 import UnoCSS from 'unocss/vite'
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import { defineConfig } from 'vite'
 
 export default defineConfig({
   resolve: {
@@ -15,9 +13,8 @@ export default defineConfig({
   },
   plugins: [
     Vue({
-      script: {
+      features: {
         propsDestructure: true,
-        defineModel: true,
       },
     }),
 
@@ -53,10 +50,5 @@ export default defineConfig({
         },
       },
     },
-  },
-
-  // https://github.com/vitest-dev/vitest
-  test: {
-    environment: 'jsdom',
   },
 })

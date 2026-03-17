@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { NCheckbox, NInput, NModal, NSelect, NSpace, useMessage } from 'naive-ui'
-
-import { storeToRefs } from 'pinia'
-import { useRssData } from '~/store/rss-data'
-import { useFeedGroup } from '~/store/feed-group'
 import type { FeedGroupItem } from '~/types/feeds'
+
+import { NCheckbox, NInput, NModal, NSelect, NSpace, useMessage } from 'naive-ui'
+import { storeToRefs } from 'pinia'
+import { useFeedGroup } from '~/store/feed-group'
+import { useRssData } from '~/store/rss-data'
 
 const { toggleModal } = defineProps<{
   isOpen: boolean

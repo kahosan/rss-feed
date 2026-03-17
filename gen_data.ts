@@ -1,13 +1,15 @@
-import { writeFile } from 'node:fs/promises'
+/* eslint-disable antfu/no-top-level-await */
 
 import type { FeedData, FeedEntry } from '@extractus/feed-extractor'
-import { extract } from '@extractus/feed-extractor'
 
-import plimit from 'p-limit'
+import type { RssData } from '~/types/feeds'
+import { writeFile } from 'node:fs/promises'
+
+import { extract } from '@extractus/feed-extractor'
 
 import feeds from 'feeds.json'
 
-import type { RssData } from '~/types/feeds'
+import plimit from 'p-limit'
 
 interface F extends Required<FeedData> {
   entries: (Required<FeedEntry> & { content: string })[]

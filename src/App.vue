@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { NConfigProvider, NMessageProvider, darkTheme } from 'naive-ui'
-import { storeToRefs } from 'pinia'
-
 import type { Feed } from './types/feeds'
 import type { DataSource } from './types/source'
 
-import { useFeedGroup } from './store/feed-group'
+import { darkTheme, NConfigProvider, NMessageProvider } from 'naive-ui'
+import { storeToRefs } from 'pinia'
+
 import { useRssData } from '~/store/rss-data'
+import { useFeedGroup } from './store/feed-group'
 
 const { data, contents } = storeToRefs(useRssData())
 const { fetchGroupedFeeds, fetchFeed } = useRssData()

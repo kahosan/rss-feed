@@ -1,7 +1,7 @@
-import { defineStore } from 'pinia'
-import { useFeedGroup } from './feed-group'
-
 import type { Feed, FeedCollect, RssData } from '~/types/feeds'
+import { defineStore } from 'pinia'
+
+import { useFeedGroup } from './feed-group'
 
 export const useRssData = defineStore('rss-data', () => {
   const data = ref<RssData | undefined>()

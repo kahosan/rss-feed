@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { NButton } from 'naive-ui'
 import type { DataSource } from '~/types/source'
+import { NButton } from 'naive-ui'
 
 const props = defineProps<{
   changeSource: (s: DataSource) => void

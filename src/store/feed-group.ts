@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia'
 import type { FeedGroup, FeedGroupItem } from '~/types/feeds'
+import { defineStore } from 'pinia'
 
 export const useFeedGroup = defineStore('feed-group', () => {
   const groups = useStorage<FeedGroup[]>('feed-group', [])

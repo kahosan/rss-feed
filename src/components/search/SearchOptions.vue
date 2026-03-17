@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { NCheckbox, NCheckboxGroup, NInputNumber } from 'naive-ui'
 import type { FuseOptions } from '~/types/fuse'
+import { NCheckbox, NCheckboxGroup, NInputNumber } from 'naive-ui'
 
 defineProps<{ onEnter: () => void }>()
 const modelValue = defineModel<FuseOptions>()
